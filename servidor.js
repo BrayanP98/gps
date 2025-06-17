@@ -1,4 +1,9 @@
 const net = require('net');
+const { broadcastCoordinates } = require('./servidor-websocket');
+
+// En tu lógica de posición GPS
+broadcastCoordinates(lat, lon);
+
 
 // ⚙️ CONFIGURACIÓN
 const PUERTO = 3000;
@@ -124,6 +129,7 @@ if (tipo === 0x13 && data.length >= 15) {
 📍 Lat: ${lat.toFixed(6)}
 📍 Lon: ${lon.toFixed(6)}
 🚗 Vel: ${speed} km/h`);
+broadcastCoordinates(lat, lon);
 
   const serial1 = data[data.length - 6];
   const serial2 = data[data.length - 5];
