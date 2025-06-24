@@ -149,11 +149,21 @@ if (tipo === 0xA4 && data.length >= 45) {
   const satellites = gpsInfo & 0x1F;
 
   const latRaw = data.readUInt32BE(11);
-  const latitude = latRaw / 30000;
+  const latitude = latRaw / 30000 / 60;
 
   const lonRaw = data.readUInt32BE(15);
-  const longitude = lonRaw / 30000;
+  const longitude = lonRaw / 30000 / 60;
+    
 
+   const course = data.readUInt16BE(20) & 0x03FF;
+  const isLatNegative = (course & 0x8000) !== 0;
+  const isLonNegative = (course & 0x4000) !== 0;
+
+  if (isLatNegative) latitude  * -1;
+  if (isLonNegative) longitude * -1;
+
+
+ 
   const speed = data[19];
   const course = data.readUInt16BE(20) & 0x03FF;
 
