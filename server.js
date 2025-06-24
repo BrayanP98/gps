@@ -31,8 +31,8 @@ app.get("/", async(req, res) => {
 
 // WebSocket
 
-function enviarCoordenadas(lat, lon,course,speed) {
-  const mensaje = JSON.stringify({ lat, lon, course,speed});
+function enviarCoordenadas(lat, lon, course, speed) {
+  const mensaje = JSON.stringify({ lat, lon, course, speed});
   wss.clients.forEach(client => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(mensaje);
@@ -184,7 +184,7 @@ if (isLonNegative) longitude = -longitude;
 🔐 ID dispositivo (parcial): ${deviceID}`);
 
  
-enviarCoordenadas(latitude, longitude,course,speed); // 🔥 Aquí se manda al front
+enviarCoordenadas(latitude, longitude, course, speed); // 🔥 Aquí se manda al front
  
  
  // Puedes responder con un ACK genérico si lo deseas:
