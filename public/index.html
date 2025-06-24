@@ -22,7 +22,7 @@
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
   const marker = L.marker([4.65, -74.09]).addTo(map);
 
-  const ws = new WebSocket('wss://187.33.155.83:8080');
+  const ws = new WebSocket('ws://187.33.155.83:8080');
 
   ws.onmessage = (msg) => {
     const { lat, lon } = JSON.parse(msg.data);
