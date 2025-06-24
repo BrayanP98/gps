@@ -20,11 +20,14 @@
   
   const map = L.map('map').setView([4.65, -74.09], 13); // Bogotá por defecto
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
- const gpsIcon = L.icon({
-  iconUrl: 'https://real.gpscenter.xyz/images/comm/gray_23.png', // Ícono personalizado
+ function getIcon(icon){
+
+   const gpsIcon = L.icon({
+  iconUrl: icon, // Ícono personalizado
   iconSize: [32, 32],
   iconAnchor: [16, 32], // El "pico" apunta al punto exacto
 });
+ }
 
 const marker = L.marker([4.65, -74.09], { icon: gpsIcon }).addTo(map);
 
@@ -32,10 +35,16 @@ const marker = L.marker([4.65, -74.09], { icon: gpsIcon }).addTo(map);
   const ws = new WebSocket('ws://187.33.155.83:8080');
 
   ws.onmessage = (msg) => {
-    const { lat, lon } = JSON.parse(msg.data);
+    const { lat, lon,course,speed } = JSON.parse(msg.data);
     marker.setLatLng([lat, lon]);
     map.setView([lat, lon], 15);
     console.log(`📍 Recibido: ${lat}, ${lon}`);
+    getIcon('https://real.gpscenter.xyz/images/comm/gray_23.png')
+    if(speed!=0){
+      getIcon('https://real.gpscenter.xyz/images/comm/green_23.png')
+    }
+
+    
   };
 </script>
 
