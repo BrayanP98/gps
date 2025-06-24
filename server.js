@@ -165,7 +165,7 @@ if (tipo === 0xA4 && data.length >= 45) {
 
  
   const speed = data[19];
-  const course = data.readUInt16BE(20) & 0x03FF;
+  const course = data.readUInt16BE(20) ;
 
   const mcc = data.readUInt16BE(22);
   const mnc = data[24];
