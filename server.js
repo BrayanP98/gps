@@ -135,9 +135,63 @@ if (tipo === 0x13 && data.length >= 15) {
 
 
 /////////////////////////////////
+// ✅ Paquete extendido tipo 0xA4
+if (tipo === 0xA4 && data.length >= 45) {
+  const year = 2000 + data[4];
+  const month = data[5];
+  const day = data[6];
+  const hour = data[7];
+  const minute = data[8];
+  const second = data[9];
+
+  const gpsInfo = data[10];
+  const gpsValid = (gpsInfo & 0x80) >> 7;
+  const satellites = gpsInfo & 0x1F;
+
+  const latRaw = data.readUInt32BE(11);
+  const latitude = latRaw / 30000;
+
+  const lonRaw = data.readUInt32BE(15);
+  const longitude = lonRaw / 30000;
+
+  const speed = data[19];
+  const course = data.readUInt16BE(20) & 0x03FF;
+
+  const mcc = data.readUInt16BE(22);
+  const mnc = data[24];
+  const lac = data.readUInt16BE(25);
+  const cellId = data.readUInt32BE(27);
+
+  const deviceID = [...data.slice(33, 37)].map(b => b.toString(16).padStart(2, '0')).join('');
+
+  console.log(`📦 Tipo de paquete 0xA4 (Datos extendidos GPS)
+🕒 Fecha: ${year}-${month}-${day} ${hour}:${minute}:${second}
+📡 GPS válido: ${gpsValid}, Satélites: ${satellites}
+🌍 Latitud: ${latitude.toFixed(6)}, Longitud: ${longitude.toFixed(6)}
+🚗 Velocidad: ${speed} km/h, Curso: ${course}°
+📶 Torre: MCC=${mcc}, MNC=${mnc}, LAC=${lac}, CellID=${cellId}
+🔐 ID dispositivo (parcial): ${deviceID}`);
+
+  // Puedes responder con un ACK genérico si lo deseas:
+  const serial1 = data[data.length - 6];
+  const serial2 = data[data.length - 5];
+  const payload = Buffer.from([0x05, 0xA4, serial1, serial2]);
+  const crc = crc16(payload);
+  const crcBuf = Buffer.alloc(2);
+  crcBuf.writeUInt16BE(crc);
+  const ack = Buffer.concat([
+    Buffer.from([0x78, 0x78]),
+    payload,
+    crcBuf,
+    Buffer.from([0x0D, 0x0A]),
+  ]);
+  socket.write(ack);
+  console.log('📤 ACK enviado para paquete 0xA4');
+}
 
 
-      // ✅ Posición tipo 0x12
+
+        // ✅ Posición tipo 0x12
       if (tipo === 0x22 && data.length >= 28) {
   const year = 2000 + data[4];
   const month = data[5];
