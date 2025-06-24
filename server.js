@@ -152,15 +152,16 @@ if (tipo === 0xA4 && data.length >= 45) {
   const latitude = latRaw / 30000 / 60;
 
   const lonRaw = data.readUInt32BE(15);
-  const longitude = lonRaw / 30000 / 60;
+  const longitude = -lonRaw / 30000 / 60;
     
 
    const course = data.readUInt16BE(20) & 0x03FF;
+ 
   const isLatNegative = (course & 0x8000) !== 0;
   const isLonNegative = (course & 0x4000) !== 0;
 
-  if (isLatNegative) latitude  * -1;
-  if (isLonNegative) longitude * -1;
+  if (isLatNegative) latitude = -latitude;
+if (isLonNegative) longitude = -longitude;
 
 
  
@@ -181,7 +182,7 @@ if (tipo === 0xA4 && data.length >= 45) {
 🚗 Velocidad: ${speed} km/h, Curso: ${course}°
 📶 Torre: MCC=${mcc}, MNC=${mnc}, LAC=${lac}, CellID=${cellId}
 🔐 ID dispositivo (parcial): ${deviceID}`);
-
+enviarCoordenadas(latitude, longitude); // 🔥 Aquí se manda al front
   // Puedes responder con un ACK genérico si lo deseas:
   const serial1 = data[data.length - 6];
   const serial2 = data[data.length - 5];
