@@ -35,7 +35,7 @@ const marker = L.marker([4.65, -74.09], { icon: gpsIcon }).addTo(map);
   const ws = new WebSocket('ws://187.33.155.83:8080');
 
   ws.onmessage = (msg) => {
-    const { lat, lon,course,speed } = JSON.parse(msg.data);
+    const { lat, lon, course, speed } = JSON.parse(msg.data);
     marker.setLatLng([lat, lon]);
     map.setView([lat, lon], 15);
     console.log(`📍 Recibido: ${lat}, ${lon}`);
