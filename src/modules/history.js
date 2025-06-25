@@ -1,41 +1,23 @@
-const {Schema, model} = require('mongoose');
+const mongoose = require('mongoose');
 
-const moveSchema= new Schema({
-    imei:{
-        type:String,
-        required:true,
-        unique:false,
-        trim:true
-           },
-    moving:[{
-
-    latitude:{
-        type:String,
-        required:true,
-        unique:false,
+const gpsTrackSchema = new mongoose.Schema({
+  imei: { type: String, required: true, unique: true },
+  historial: [{
+    location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point'
+      },
+      coordinates: {
+        type: [Number], // [lon, lat]
+        required: true
+      }
     },
-    longitude:{
-        type:String,
-        required:true,
-        unique:false,
-    },
-    speed:{
-        type:String,
-        required:true,
-        unique:false,
-    },
-    course:{
-        type:String,
-        required:true,
-        unique:false,
-    },
-    }],
-   
-
-     done: Boolean,},{
-        timestamps:true,
-        versionKey:false
-     
+    course: Number,
+    speed: Number,
+    timestamp: { type: Date, default: Date.now }
+  }]
 });
 
-module.exports=model('history', moveSchema);
+module.exports = mongoose.model('GpsTrack', gpsTrackSchema);

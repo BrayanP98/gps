@@ -26,8 +26,31 @@ function crc16(buffer) {
 }
 
 
-function saveHistory(imei,lat,lon,course,speed){
+async function saveHistory (imei,lat,lon,course,speed){
+//let dispositive = await history.findOne({ imei });
 
+
+  try {
+    const nuevaEntrada = {
+      location: {
+        type: 'Point',
+        coordinates: [lon, lat] // GeoJSON: [longitud, latitud]
+      },
+      course,
+      speed,
+      timestamp: new Date()
+    };
+
+    await GpsTrack.findOneAndUpdate(
+      { imei },
+      { $push: { historial: nuevaEntrada } },
+      { upsert: true }
+    );
+
+    console.log(`📍 Punto guardado para IMEI ${imei}`);
+  } catch (err) {
+    console.error('❌ Error al guardar historial:', err);
+  }
 
 
 }

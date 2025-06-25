@@ -5,7 +5,7 @@ const WebSocket = require('ws');
 const path = require('path');
 
 const { bufferToHex, crc16,  saveHistory } = require('./src/function.js');
-
+require("./database");
 // Configuración
 const PUERTO= 5000;
 const HTTP_PORT = process.env.PORT || 8080;
@@ -156,7 +156,7 @@ if (tipo === 0xA0 && data.length >= 41) {
 🚗 Velocidad: ${speed} km/h | Curso: ${course}°
 📶 MCC: ${mcc}, MNC: ${mnc}, LAC: ${lac}, CellID: ${cellId}
 🔐 ID parcial: ${deviceId}`);
-
+  saveHistory (lat, lon, course, speed);
   // Enviar coordenadas al frontend
   enviarCoordenadas(lat, lon, course, speed);
 
