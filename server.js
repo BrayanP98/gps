@@ -133,6 +133,64 @@ if (tipo === 0x13 && data.length >= 15) {
   console.log('📤 ACK enviado para paquete 0x13');
 }
 
+if (tipo === 0xA0 && data.length >= 41) {
+  const year = 2000 + data[4];
+  const month = data[5];
+  const day = data[6];
+  const hour = data[7];
+  const minute = data[8];
+  const second = data[9];
+
+  const gpsInfo = data[10];
+  const gpsValid = (gpsInfo & 0x80) >> 7;
+  const satellites = gpsInfo & 0x1F;
+
+  let lat = data.readUInt32BE(11) / 30000 / 60;
+  let lon = data.readUInt32BE(15) / 30000 / 60;
+
+  const speed = data[19];
+  const courseStatus = data.readUInt16BE(20);
+  const isLatNegative = (courseStatus & 0x8000) !== 0;
+  const isLonNegative = (courseStatus & 0x4000) !== 0;
+  const course = courseStatus & 0x03FF;
+
+  if (isLatNegative) lat *= -1;
+  if (isLonNegative) lon *= -1;
+
+  const mcc = data.readUInt16BE(22);
+  const mnc = data[24];
+  const lac = data.readUInt16BE(25);
+  const cellId = data.readUInt32BE(27);
+
+  const deviceId = [...data.slice(31, 35)].map(b => b.toString(16).padStart(2, '0')).join('');
+
+  console.log(`📦 Tipo de paquete 0xA0 (Posición extendida)
+🕒 Fecha/Hora: ${year}-${month}-${day} ${hour}:${minute}:${second}
+📡 Satélites: ${satellites} | GPS válido: ${gpsValid}
+📍 Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)}
+🚗 Velocidad: ${speed} km/h | Curso: ${course}°
+📶 MCC: ${mcc}, MNC: ${mnc}, LAC: ${lac}, CellID: ${cellId}
+🔐 ID parcial: ${deviceId}`);
+
+  // Enviar coordenadas al frontend
+  enviarCoordenadas(lat, lon, course, speed);
+
+  // ACK
+  const serial1 = data[data.length - 6];
+  const serial2 = data[data.length - 5];
+  const payload = Buffer.from([0x05, 0xA0, serial1, serial2]);
+  const crc = crc16(payload);
+  const crcBuf = Buffer.alloc(2);
+  crcBuf.writeUInt16BE(crc);
+  const ack = Buffer.concat([
+    Buffer.from([0x78, 0x78]),
+    payload,
+    crcBuf,
+    Buffer.from([0x0D, 0x0A]),
+  ]);
+  socket.write(ack);
+  console.log('📤 ACK enviado para paquete 0xA0');
+}
 
 /////////////////////////////////
 // ✅ Paquete extendido tipo 0xA4
