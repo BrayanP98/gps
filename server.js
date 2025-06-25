@@ -210,7 +210,7 @@ if (tipo === 0xA4 && data.length >= 45) {
   const latitude = latRaw / 30000 / 60;
 
   const lonRaw = data.readUInt32BE(15);
-  const longitude = -lonRaw / 30000 / 60;
+  const longitude = lonRaw / 30000 / 60;
     
 
    const course = data.readUInt16BE(20) & 0x03FF;
