@@ -41,7 +41,7 @@ async function saveHistory (imei,lat,lon,course,speed){
       timestamp: new Date()
     };
 
-    await GpsTrack.findOneAndUpdate(
+    await history.findOneAndUpdate(
       { imei },
       { $push: { historial: nuevaEntrada } },
       { upsert: true }
