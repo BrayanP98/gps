@@ -2,12 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GPS Tracker Live Map</title>
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
     body, html { height: 100%; margin: 0; }
     #map { height: 100%; }
@@ -15,47 +12,89 @@
 </head>
 <body>
   <div id="map"></div>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-  
-  const map = L.map('map').setView([4.65, -74.09], 13); // Bogotá por defecto
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
- 
-   
-
-   const gpsIcon = L.icon({
-  iconUrl: 'https://real.gpscenter.xyz/images/comm/gray_23.png', // Ícono personalizado
-  iconSize: [32, 32],
-  iconAnchor: [16, 32], // El "pico" apunta al punto exacto
-});
-   const marker = L.marker([4.65, -74.09], { icon: gpsIcon }).addTo(map);
- 
-
-
-
-
-  const ws = new WebSocket('ws://187.33.155.83:8080');
-
-  ws.onmessage = (msg) => {
-    console.log(msg.data)
-    const { lat, lon, course, speed } = JSON.parse(msg.data);
-    marker.setLatLng([lat, lon]);
-    map.setView([lat, lon], 15);
-    console.log(`📍 Recibido: ${lat}, ${lon}`);
-   
-    if(speed!=0){
-      const gpsIcon = L.icon({
-  iconUrl: 'https://real.gpscenter.xyz/images/comm/green_23.png', // Ícono personalizado
-  iconSize: [32, 32],
-  iconAnchor: [16, 32], // El "pico" apunta al punto exacto
-});
-   const marker = L.marker([4.65, -74.09], { icon: gpsIcon }).addTo(map);
+  <div id="infoDisp"></div>
+ <style>
+    #infoDisp{
+      display: flex;
+      flex-direction: column;
+      width: 200px;
+      height: 200px;
+      position: fixed;
+      z-index: 999;
+      right: 0;
+      top: 150px;
+      background: white;
+ visibility: hidden;
     }
+      #infoDisp.active{
+        visibility: visible;
+      }
 
-    
-  };
-</script>
 
+  </style>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-rotatedmarker/leaflet.rotatedMarker.js"></script>
+
+  <script>
+    const map = L.map('map').setView([4.65, -74.09], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // Íconos para detenido y en movimiento
+    const iconStop = L.icon({
+      iconUrl: 'https://real.gpscenter.xyz/images/comm/gray_23.png',
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+    });
+
+    const iconMove = L.icon({
+      iconUrl: 'https://real.gpscenter.xyz/images/comm/green_23.png',
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+    });
+
+    // Crear un único marcador con rotación
+    const marker = L.marker([4.65, -74.09], {
+      icon: iconStop,
+      rotationAngle: 0,
+      rotationOrigin: 'center center'
+    }).addTo(map);
+
+    const ws = new WebSocket('ws://187.33.155.83:8080');
+
+    ws.onmessage = (msg) => {
+      const { lat, lon, course, speed } = JSON.parse(msg.data);
+      marker.setLatLng([lat, lon]);
+      marker.setRotationAngle(course || 0);
+      marker.setIcon(speed > 0 ? iconMove : iconStop);
+      map.setView([lat, lon], 15);
+
+
+      marker.on('click', () => {
+
+
+  var infoDisp=document.getElementById("infoDisp")
+  infoDisp.innerHTML=""
+  
+  var p_lat=document.createElement("p")
+  p_lat.id="p_lat"
+  var p_lon=document.createElement("p")
+  var p_course=document.createElement("p")
+  var p_speed=document.createElement("p")
+  
+    p_lat.innerHTML="lat:"+lat
+    p_lon.innerHTML="Lon:"+lon
+    p_course.innerHTML="curso:"+course
+    p_speed.innerHTML="vel:"+speed
+  infoDisp.appendChild(p_lat)
+   infoDisp.appendChild(p_lon)
+    infoDisp.appendChild(p_course)
+     infoDisp.appendChild(p_speed)
+
+     infoDisp.classList.toggle("active")
+
+});
+    };
   </script>
+ 
 </body>
 </html>
