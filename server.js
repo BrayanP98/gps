@@ -74,9 +74,10 @@ function generarACKLogin(serial1 = 0x00, serial2 = 0x01) {
     Buffer.from([0x0D, 0x0A])
   ]);
 }
+const conexionesIMEI = new Map(); 
     if (header === '7878') {
       const tipo = data[3];
-const conexionesIMEI = new Map(); 
+
       // ✅ Login
       if (tipo === 0x01 && data.length >= 16) {
         const imei = [...data.slice(4, 12)].map(b => b.toString(16).padStart(2, '0')).join('');
@@ -158,8 +159,8 @@ if (tipo === 0xA0 && data.length >= 41) {
 🚗 Velocidad: ${speed} km/h | Curso: ${course}°
 📶 MCC: ${mcc}, MNC: ${mnc}, LAC: ${lac}, CellID: ${cellId}
 🔐 ID parcial: ${deviceId}`);
-const imei1 = conexionesIMEI.get(imei);
-  saveHistory (imei1,lat, lon, course, speed);
+const imei = conexionesIMEI.get(socket);
+  saveHistory (imei,lat, lon, course, speed);
   // Enviar coordenadas al frontend
   enviarCoordenadas(lat, lon, course, speed);
 
