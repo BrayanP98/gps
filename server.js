@@ -14,13 +14,14 @@ const HTTP_PORT = process.env.PORT || 8080;
 const app = express();
 const server = http.createServer(app); // ✅ Servidor HTTP
 
-const wss = new WebSocket.Server({ server }); // ✅ WebSocket adjunto al servidor HTTP
-
+// ✅ WebSocket adjunto al servidor HTTP
 // Servir archivos estáticos del frontend
 
 server.listen(HTTP_PORT, () => {
  console.log(`Server listening on port ${HTTP_PORT}`);
 });
+
+const wss = new WebSocket.Server({ server }); 
 app.use(express.static(path.join(__dirname, 'public')));
 // Servir frontend
 

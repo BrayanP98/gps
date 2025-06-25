@@ -1,5 +1,7 @@
 const WebSocket = require('ws');
 
+const history=require('./src/models/history.js');
+
 /////////////
 
 
@@ -24,12 +26,19 @@ function crc16(buffer) {
 }
 
 
+function saveHistory(){
+
+
+
+}
+
 
 
 
 module.exports = {
   bufferToHex,
-  crc16
+  crc16,
+  saveHistory
 
  
 };
