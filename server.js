@@ -172,7 +172,7 @@ if (tipo === 0xA0 && data.length >= 41) {
 🔐 ID parcial: ${deviceId}`);
 let imei=conexionesIMEI.get(socket)
 saveHistory(imei, lat, lon, course, speed);
-enviarCoordenadas(latitude, longitude, course, speed)
+enviarCoordenadas(lat, lon, course, speed)
 
   // ACK
   const serial1 = data[data.length - 6];
