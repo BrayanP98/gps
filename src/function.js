@@ -26,7 +26,7 @@ function crc16(buffer) {
 }
 
 
-function saveHistory(){
+function saveHistory(imei,lat,lon,course,speed){
 
 
 

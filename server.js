@@ -4,7 +4,7 @@ const http = require('http');
 const WebSocket = require('ws');
 const path = require('path');
 
-const { bufferToHex, crc16 } = require('./src/function.js');
+const { bufferToHex, crc16,  saveHistory } = require('./src/function.js');
 
 // Configuración
 const PUERTO= 5000;
@@ -35,6 +35,7 @@ app.get("/", async(req, res) => {
 // WebSocket
 
 function enviarCoordenadas(lat, lon, course, speed) {
+  console.log(lat,lon,course)
   const mensaje = JSON.stringify({ lat, lon, course, speed});
   wss.clients.forEach(client => {
     if (client.readyState === WebSocket.OPEN) {
