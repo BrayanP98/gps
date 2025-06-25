@@ -1,7 +1,7 @@
 const WebSocket = require('ws');
 
 /////////////
-const wss = new WebSocket.Server({ server })
+
 
 function bufferToHex(buffer) {
   return [...buffer].map(b => b.toString(16).padStart(2, '0')).join(' ');
@@ -25,18 +25,11 @@ function crc16(buffer) {
 
 
 
-function enviarCoordenadas(lat, lon, course, speed) {
-  const mensaje = JSON.stringify({ lat, lon, course, speed});
-  wss.clients.forEach(client => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(mensaje);
-    }
-  });
-}
+
 
 module.exports = {
   bufferToHex,
-  crc16,
-  enviarCoordenadas
+  crc16
+
  
 };

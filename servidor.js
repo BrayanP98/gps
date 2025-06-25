@@ -15,7 +15,20 @@ const PUERTO = 3000;
 
 
 // ✅ CRC16 para ACKs
-
+function crc16(buffer) {
+  let crc = 0xFFFF;
+  for (let i = 0; i < buffer.length; i++) {
+    crc ^= buffer[i];
+    for (let j = 0; j < 8; j++) {
+      if (crc & 1) {
+        crc = (crc >>> 1) ^ 0xA001;
+      } else {
+        crc >>>= 1;
+      }
+    }
+  }
+  return crc;
+}
 
 // 🚀 Crear servidor TCP
 const server = net.createServer((socket) => {

@@ -4,7 +4,7 @@ const http = require('http');
 const WebSocket = require('ws');
 const path = require('path');
 
-const { bufferToHex, crc16, enviarCoordenadas} = require('./src/function.js');
+const { bufferToHex, crc16 } = require('./src/function.js');
 
 // Configuración
 const PUERTO= 5000;
@@ -14,7 +14,7 @@ const HTTP_PORT = process.env.PORT || 8080;
 const app = express();
 const server = http.createServer(app); // ✅ Servidor HTTP
 
-; // ✅ WebSocket adjunto al servidor HTTP
+const wss = new WebSocket.Server({ server }); // ✅ WebSocket adjunto al servidor HTTP
 
 // Servir archivos estáticos del frontend
 
@@ -31,7 +31,17 @@ app.get("/", async(req, res) => {
  
 });
 
+// WebSocket
 
+function enviarCoordenadas(lat, lon, course, speed) {
+  const mensaje = JSON.stringify({ lat, lon, course, speed});
+  wss.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(mensaje);
+    }
+  });
+}
+//console.log(`📡 WebSocket en ws://localhost:${PORT_WS}`);
 
 
 
