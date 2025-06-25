@@ -154,8 +154,8 @@ if (tipo === 0xA0 && data.length >= 41) {
   const isLonNegative = (courseStatus & 0x4000) !== 0;
   const course = courseStatus & 0x03FF;
 
-  if (isLatNegative) lat *= -1;
-  if (isLonNegative) lon *= -1;
+  if (isLatNegative) lat *-1;
+  if (isLonNegative) lon *-1;
 
   const mcc = data.readUInt16BE(22);
   const mnc = data[24];
