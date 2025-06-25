@@ -74,7 +74,24 @@ function generarACKLogin(serial1 = 0x00, serial2 = 0x01) {
     Buffer.from([0x0D, 0x0A])
   ]);
 }
-const conexionesIMEI = new Map(); 
+const conexionesIMEI = new Map();
+const bufferPendiente = new Map(); // socket → array
+
+function guardarTemporalOHistorial(socket, lat, lon, course, speed) {
+  const imei = conexionesIMEI.get(socket);
+
+  if (imei) {
+    // ✅ Ya se conoce el IMEI, guardar directo
+    saveHistory(imei, lat, lon, course, speed);
+  } else {
+    // ⚠️ Guardar temporalmente
+    if (!bufferPendiente.has(socket)) {
+      bufferPendiente.set(socket, []);
+    }
+    bufferPendiente.get(socket).push({ lat, lon, course, speed });
+    console.log('🕒 Coordenadas almacenadas temporalmente, esperando login');
+  }
+}
     if (header === '7878') {
       const tipo = data[3];
 
@@ -85,8 +102,18 @@ const conexionesIMEI = new Map();
         const ack = Buffer.from('787805010001d9dc0d0a', 'hex');
         socket.write(ack);
 
-         conexionesIMEI.set(socket, imei);
+         
         console.log('📤 ACK enviado para LOGIN');
+
+
+         if (bufferPendiente.has(socket)) {
+    const datosPendientes = bufferPendiente.get(socket);
+    for (const { lat, lon, course, speed } of datosPendientes) {
+      saveHistory(imei, lat, lon, course, speed);
+    }
+    bufferPendiente.delete(socket);
+    console.log(`✅ Se guardaron ${datosPendientes.length} coordenadas pendientes para ${imei}`);
+  }
       }
 console.log(`📦 Tipo de paquete recibido: 0x${tipo.toString(16)}`);
 
@@ -159,10 +186,9 @@ if (tipo === 0xA0 && data.length >= 41) {
 🚗 Velocidad: ${speed} km/h | Curso: ${course}°
 📶 MCC: ${mcc}, MNC: ${mnc}, LAC: ${lac}, CellID: ${cellId}
 🔐 ID parcial: ${deviceId}`);
-const imei = conexionesIMEI.get(socket);
-  saveHistory (imei,lat, lon, course, speed);
-  // Enviar coordenadas al frontend
-  enviarCoordenadas(lat, lon, course, speed);
+
+guardarTemporalOHistorial(socket, lat, lon, course, speed);
+
 
   // ACK
   const serial1 = data[data.length - 6];
