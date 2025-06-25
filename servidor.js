@@ -1,5 +1,5 @@
 const net = require('net');
-const history=require('./src/models/history.js');
+
 const { broadcastCoordinates } = require('./servidor-websocket');
 const { bufferToHex, crc16, generarACK } = require('./src/function.js');
 
