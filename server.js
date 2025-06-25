@@ -77,6 +77,9 @@ function generarACKLogin(serial1 = 0x00, serial2 = 0x01) {
 const conexionesIMEI = new Map();
 const bufferPendiente = new Map(); // socket → array
 
+
+    if (header === '7878') {
+
 function guardarTemporalOHistorial(socket, lat, lon, course, speed) {
   const imei = conexionesIMEI.get(socket);
 
@@ -92,7 +95,8 @@ function guardarTemporalOHistorial(socket, lat, lon, course, speed) {
     console.log('🕒 Coordenadas almacenadas temporalmente, esperando login');
   }
 }
-    if (header === '7878') {
+
+
       const tipo = data[3];
 
       // ✅ Login
