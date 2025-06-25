@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 
-const history=require('./models/history.js');
+const history=require('./modules/history');
 
 /////////////
 
