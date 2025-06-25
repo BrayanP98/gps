@@ -146,7 +146,7 @@ if (tipo === 0xA0 && data.length >= 41) {
   const satellites = gpsInfo & 0x1F;
 
   let lat = data.readUInt32BE(11) / 30000 / 60;
-  let lon = data.readUInt32BE(15) / 30000 / 60;
+  let lon =- data.readUInt32BE(15) / 30000 / 60;
 
   const speed = data[19];
   const courseStatus = data.readUInt16BE(20);
@@ -210,7 +210,7 @@ if (tipo === 0xA4 && data.length >= 45) {
   const latitude = latRaw / 30000 / 60;
 
   const lonRaw = data.readUInt32BE(15);
-  const longitude = lonRaw / 30000 / 60;
+  const longitude = -lonRaw / 30000 / 60;
     
 
    const course = data.readUInt16BE(20) & 0x03FF;
