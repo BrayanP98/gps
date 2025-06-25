@@ -76,13 +76,15 @@ function generarACKLogin(serial1 = 0x00, serial2 = 0x01) {
 }
     if (header === '7878') {
       const tipo = data[3];
-
+const conexionesIMEI = new Map(); 
       // ✅ Login
       if (tipo === 0x01 && data.length >= 16) {
         const imei = [...data.slice(4, 12)].map(b => b.toString(16).padStart(2, '0')).join('');
         console.log(`📍 IMEI estimado: ${imei}`);
         const ack = Buffer.from('787805010001d9dc0d0a', 'hex');
         socket.write(ack);
+
+         conexionesIMEI.set(socket, imei);
         console.log('📤 ACK enviado para LOGIN');
       }
 console.log(`📦 Tipo de paquete recibido: 0x${tipo.toString(16)}`);
@@ -156,7 +158,8 @@ if (tipo === 0xA0 && data.length >= 41) {
 🚗 Velocidad: ${speed} km/h | Curso: ${course}°
 📶 MCC: ${mcc}, MNC: ${mnc}, LAC: ${lac}, CellID: ${cellId}
 🔐 ID parcial: ${deviceId}`);
-  saveHistory (lat, lon, course, speed);
+const imei = conexionesIMEI.get(socket);
+  saveHistory (imei,lat, lon, course, speed);
   // Enviar coordenadas al frontend
   enviarCoordenadas(lat, lon, course, speed);
 
