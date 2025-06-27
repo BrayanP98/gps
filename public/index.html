@@ -116,6 +116,13 @@
         const data = await response.json();
 
         if (data.success) {
+          var dispositive= data.historial.historial
+          for(let i;dispositive.lenght;i++){
+            console.log(dispositive[i])
+
+
+          }
+
             console.log("Historial recibido:", data);
         } else {
             console.error("Error en los datos:", data.message || "Sin mensaje");
