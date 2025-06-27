@@ -3,6 +3,7 @@ const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
 const path = require('path');
+const history=require('./src/modules/history.js');
 
 const { bufferToHex, crc16,  saveHistory } = require('./src/function.js');
 require("./database");
@@ -366,3 +367,25 @@ enviarCoordenadas(lat, lon); // 🔥 Aquí se manda al front
 servert.listen(PUERTO, '0.0.0.0', () => {
   console.log(`🚀 Servidor TCP escuchando en puerto ${PUERTO}`);
 });
+
+app.get("/api/history", async (req, res) => {
+  const imei = req.query.imei;
+
+  console.log(imei)
+  if (!imei) {
+    return res.status(400).json({ success: false, error: "IMEI requerido" });
+  }
+
+  try {
+    const historial = await history.findOne({ imei });
+
+    if (!historial) {
+      return res.status(404).json({ success: false, error: "Historial no encontrado" });
+    }
+
+    res.json({ success: true, historial });
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Error interno" });
+  }
+});
+

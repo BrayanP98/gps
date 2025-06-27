@@ -32,10 +32,8 @@ async function saveHistory (imei,lat,lon,course,speed){
 
   try {
     const nuevaEntrada = {
-      location: {
-        type: 'Point',
-        coordinates: [lon, lat] // GeoJSON: [longitud, latitud]
-      },
+      lon,
+      lat,
       course,
       speed,
       timestamp: new Date()
