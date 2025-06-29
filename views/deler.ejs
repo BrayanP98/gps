@@ -111,6 +111,10 @@
   <script src="https://unpkg.com/leaflet-rotatedmarker/leaflet.rotatedMarker.js"></script>
 
   <script>
+
+
+
+
     const map = L.map('map').setView([4.65, -74.09], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
@@ -134,9 +138,22 @@
       rotationOrigin: 'center center'
     }).addTo(map);
 
-    const ws = new WebSocket('ws://187.33.155.83:8080');
 
 
+   const imeis = <%- JSON.stringify(imeis) %>;
+
+
+  // Ejemplo: mostrar el primer IMEI
+  console.log("IMEIs disponibles:", imeis);
+    
+
+ if (imeis.length > 0) {
+   const ws = new WebSocket('ws://187.33.155.83:8080');
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ tipo: "suscribirse", imei: imeis[0]}));
+    };
+  }
 ws.onopen = () => {
   const imei = "0869066061391919"; // ← este es el IMEI que el usuario está viendo
  ws.send(JSON.stringify({ tipo: "suscribirse", imei }));
@@ -193,6 +210,40 @@ ws.onopen = () => {
 
 
     ////////////////////////
+    async function getImeis() {
+
+      const id="0869066061391919"
+    try {
+        const response = await fetch(`http://187.33.155.83:8080/api/imeis?id=${id}`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+
+
+          var dispositive= data.historial.historial
+
+          
+          for(let i;dispositive.length;i++){
+
+            
+            console.log(dispositive[i].lon)
+
+
+          }
+
+            
+        } else {
+            console.error("Error en los datos:", data.message || "Sin mensaje");
+        }
+    } catch (error) {
+        console.error("Error al conectar con la API:", error.message);
+    }
+}
 
     async function getHistory() {
 

@@ -24,6 +24,7 @@ router.post("/register", async (req, res) => {
 // Login
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
+  
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ success: false, error: "Usuario no encontrado" });
@@ -32,7 +33,18 @@ router.post("/login", async (req, res) => {
     if (!valid) return res.status(401).json({ success: false, error: "Contraseña incorrecta" });
     
     const token = jwt.sign({ userId: user._id }, SECRET, { expiresIn: "1h" });
-    res.json({ success: true, token, user });
+   
+
+
+    res.cookie('tokenSEssion', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 3600000
+  });
+
+   res.json({ success: true, token, user });
+  
+    //  res.render("deler", { user: user, token });
    //res.render("index.ejs", { user, token });
   } catch (err) {
     res.status(500).json({ success: false, error: "Error interno" });

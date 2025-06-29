@@ -40,10 +40,10 @@
           const{nombre,dispositios}=data.user
         const query = new URLSearchParams({ disp: JSON.stringify(dispositios), });
 
-
-         //  window.location.href = `/login?mensaje=${encodeURIComponent(data.message || "Registro exitoso")}`;
+            localStorage.setItem("token", data.token);
+        
            setTimeout(() => {
-            window.location.href = `/deler?${query}`;
+            window.location.href = `/deler`;
           // o "/login.html" si usas HTML directo
         }, 1500); // redirige después de 1.5 segundos
         } else {

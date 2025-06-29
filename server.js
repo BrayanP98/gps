@@ -4,12 +4,12 @@ const http = require('http');
 const WebSocket = require('ws');
 const path = require('path');
 const history=require('./src/modules/history.js');
-
+const User = require("./src/modules/user.js");
 const dotenv = require("dotenv");
 const authRoutes = require("./routes/auth.js");
 
 const jwt = require("jsonwebtoken");
-const SECRET = process.env.JWT_SECRET || "secreto";
+const SECRET = process.env.JWT_SECRET || "clave_secreta";
 dotenv.config();
 
 
@@ -24,6 +24,8 @@ const HTTP_PORT = process.env.PORT || 8080;
 // Inicializar Express + HTTP + WebSocket
 const app = express();
 const server = http.createServer(app); // ✅ Servidor HTTP
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
 // ✅ WebSocket adjunto al servidor HTTP
 // Servir archivos estáticos del frontend
@@ -41,12 +43,31 @@ app.use(express.json());            // ← para JSON
 app.use(express.urlencoded({ extended: true })); // ← para formularios tipo `x-www-form-urlencoded`
 
 // Servir frontend
-app.use("/api/auth", authRoutes);
-app.get("/deler", async(req, res) => {
-  
 
- 
- res.render("deler")
+app.use("/api/auth", authRoutes);
+
+app.get("/deler", async (req, res) => {
+  const token = req.cookies.tokenSEssion; // Nombre de la cookie
+  console.log("Token desde cookie:", token);
+  if (!token) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET);
+   // console.log("Usuario verificado:", decoded);
+
+    const user = await User.findOne({ _id: decoded.userId   });
+    
+    console.log(user.dispositivos[1])
+
+    
+    res.render("deler", {imeis: user.dispositivos });
+  } catch (err) {
+    console.error("Token inválido:", err);
+    return res.redirect("/login");
+  }
+  
 
  
 });
@@ -69,7 +90,7 @@ app.get("/sigInUp", async(req, res) => {
 const clientesPorIMEI = new Map();
 // WebSocket
 function enviarCoordenadas(lat, lon, course, speed, imei) {
-  console.log("holaaaaaaaaa")
+ 
   const mensaje = JSON.stringify({ lat, lon, course, speed, imei });
 
   const clientes = clientesPorIMEI.get(imei);
