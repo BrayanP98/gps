@@ -69,6 +69,7 @@ app.get("/sigInUp", async(req, res) => {
 const clientesPorIMEI = new Map();
 // WebSocket
 function enviarCoordenadas(lat, lon, course, speed, imei) {
+  console.log("holaaaaaaaaa")
   const mensaje = JSON.stringify({ lat, lon, course, speed, imei });
 
   const clientes = clientesPorIMEI.get(imei);
@@ -235,9 +236,10 @@ if (tipo === 0xA0 && data.length >= 41) {
 🚗 Velocidad: ${speed} km/h | Curso: ${course}°
 📶 MCC: ${mcc}, MNC: ${mnc}, LAC: ${lac}, CellID: ${cellId}
 🔐 ID parcial: ${deviceId}`);
-let imei=conexionesIMEI.get(socket)
+
 saveHistory(imei, lat, lon, course, speed);
-enviarCoordenadas(lat, lon, course, speed)
+let imei = conexionesIMEI.get(socket);
+enviarCoordenadas(lat, lon, course, speed, imei);
 
   // ACK
   const serial1 = data[data.length - 6];
@@ -306,7 +308,8 @@ if (isLonNegative) longitude = -longitude;
 🔐 ID dispositivo (parcial): ${deviceID}`);
 
  
-enviarCoordenadas(latitude, longitude, course, speed); // 🔥 Aquí se manda al front
+let imei = conexionesIMEI.get(socket);
+enviarCoordenadas(lat, lon, course, speed, imei); // 🔥 Aquí se manda al front
  
  
  // Puedes responder con un ACK genérico si lo deseas:
@@ -356,7 +359,8 @@ enviarCoordenadas(latitude, longitude, course, speed); // 🔥 Aquí se manda al
 📍 Lat: ${lat.toFixed(6)}
 📍 Lon: ${lon.toFixed(6)}
 🚗 Vel: ${speed} km/h`);
-enviarCoordenadas(lat, lon); // 🔥 Aquí se manda al front
+let imei = conexionesIMEI.get(socket);
+enviarCoordenadas(lat, lon, course, speed, imei);
   const serial1 = data[data.length - 6];
   const serial2 = data[data.length - 5];
   const payload = Buffer.from([0x05, 0x22, serial1, serial2]);
