@@ -138,7 +138,7 @@
       rotationOrigin: 'center center'
     }).addTo(map);
 
-
+const ws = new WebSocket('ws://187.33.155.83:8080');
 
    const imeis = <%- JSON.stringify(imeis) %>;
 
@@ -148,7 +148,7 @@
     
 
  if (imeis.length > 0) {
-   const ws = new WebSocket('ws://187.33.155.83:8080');
+   
 
     ws.onopen = () => {
       ws.send(JSON.stringify({ tipo: "suscribirse", imei: imeis[0]}));
