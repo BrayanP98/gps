@@ -83,7 +83,7 @@ function enviarCoordenadas(lat, lon, course, speed, imei) {
 
 //console.log(`📡 WebSocket en ws://localhost:${PORT_WS}`);
 
-
+const conexionesIMEI = new Map();
 const bufferPendiente = new Map();
 ////////////////////////////////////////////////////////
 
