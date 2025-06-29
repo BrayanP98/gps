@@ -134,7 +134,14 @@
       rotationOrigin: 'center center'
     }).addTo(map);
 
-    const ws = new WebSocket('ws://187.33.155.83:8080');
+    const ws = new WebSocket('https://ideal-parakeet-6qqgjvw7jjpc59w9-8080.app.github.dev/');
+
+
+ws.onopen = () => {
+  const imei = "0869066061391919"; // ← este es el IMEI que el usuario está viendo
+ ws.send(JSON.stringify({ tipo: "suscribirse", imei }));
+};
+
 
     ws.onmessage = (msg) => {
       const { lat, lon, course, speed } = JSON.parse(msg.data);

@@ -30,13 +30,15 @@ router.post("/login", async (req, res) => {
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(401).json({ success: false, error: "Contraseña incorrecta" });
-
+    
     const token = jwt.sign({ userId: user._id }, SECRET, { expiresIn: "1h" });
     res.json({ success: true, token, user });
-   res.render("index.ejs", { user, token });
+   //res.render("index.ejs", { user, token });
   } catch (err) {
     res.status(500).json({ success: false, error: "Error interno" });
   }
 });
 
 module.exports = router;
+
+

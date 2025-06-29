@@ -8,9 +8,14 @@ const history=require('./src/modules/history.js');
 const dotenv = require("dotenv");
 const authRoutes = require("./routes/auth.js");
 
+const jwt = require("jsonwebtoken");
+const SECRET = process.env.JWT_SECRET || "secreto";
 dotenv.config();
 
-const { bufferToHex, crc16,  saveHistory } = require('./src/function.js');
+
+const socketIMEIs = new Map();
+
+const { bufferToHex, crc16,  saveHistory, buscarImei} = require('./src/function.js');
 require("./database");
 // Configuración
 const PUERTO= 5000;
@@ -38,13 +43,19 @@ app.use(express.urlencoded({ extended: true })); // ← para formularios tipo `x
 // Servir frontend
 app.use("/api/auth", authRoutes);
 app.get("/deler", async(req, res) => {
+  
+
  
-  res.render("index")
+ res.render("deler")
 
  
 });
 app.get("/login", async(req, res) => {
- 
+
+   
+
+
+
   res.render("login")
 
  
@@ -55,51 +66,68 @@ app.get("/sigInUp", async(req, res) => {
 
  
 });
-
+const clientesPorIMEI = new Map();
 // WebSocket
+function enviarCoordenadas(lat, lon, course, speed, imei) {
+  const mensaje = JSON.stringify({ lat, lon, course, speed, imei });
 
-function enviarCoordenadas(lat, lon, course, speed) {
-  console.log(lat,lon,course)
-  const mensaje = JSON.stringify({ lat, lon, course, speed});
-  wss.clients.forEach(client => {
+  const clientes = clientesPorIMEI.get(imei);
+  if (!clientes) return;
+
+  clientes.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(mensaje);
     }
   });
 }
+
 //console.log(`📡 WebSocket en ws://localhost:${PORT_WS}`);
 
-const conexionesIMEI = new Map();
-const bufferPendiente = new Map();
 
-// TCP Server
-// 🧠 Utilidad para mostrar los datos en hexadecimal
+const bufferPendiente = new Map();
+////////////////////////////////////////////////////////
+
+wss.on('connection', (ws) => {
+  ws.on('message', (message) => {
+    try {
+      const data = JSON.parse(message);
+      if (data.tipo === 'suscribirse' && data.imei) {
+        const imei = data.imei;
+
+        // Vincular cliente a ese IMEI
+        if (!clientesPorIMEI.has(imei)) {
+          clientesPorIMEI.set(imei, new Set());
+        }
+        clientesPorIMEI.get(imei).add(ws);
+
+        ws.imei = imei; // opcional, útil en desconexión
+        console.log(`✅ Cliente suscrito al IMEI ${imei}`);
+      }
+    } catch (err) {
+      console.error("❌ Error al parsear mensaje del cliente:", err.message);
+    }
+  });
+
+  ws.on('close', () => {
+    if (ws.imei && clientesPorIMEI.has(ws.imei)) {
+      clientesPorIMEI.get(ws.imei).delete(ws);
+      console.log(`🚪 Cliente desconectado de IMEI ${ws.imei}`);
+    }
+  });
+});
+
 
 // 🚀 Crear servidor TCP
 const servert = net.createServer((socket) => {
   const remote = `${socket.remoteAddress}:${socket.remotePort}`;
   console.log(`📡 Conexión desde ${remote}`);
 
-  socket.on('data', (data) => {
+  socket.on('data',async  (data) => {
     console.log(`📨 Datos recibidos (${data.length} bytes)`);
     console.log('HEX:', bufferToHex(data));
 
     // Distinguir si es encabezado 0x78 0x78 (paquete normal) o 0x79 0x79 (extendido)
     const header = data.slice(0, 2).toString('hex');
-function generarACKLogin(serial1 = 0x00, serial2 = 0x01) {
-  const payload = Buffer.from([0x05, 0x01, serial1, serial2]); // Longitud, tipo, serial
-  const crc = crc16(payload);
-  const crcBuf = Buffer.alloc(2);
-  crcBuf.writeUInt16BE(crc);
-
-  return Buffer.concat([
-    Buffer.from([0x78, 0x78]),
-    payload,
-    crcBuf,
-    Buffer.from([0x0D, 0x0A])
-  ]);
-}
-
 
 
     if (header === '7878') {
@@ -113,6 +141,19 @@ function generarACKLogin(serial1 = 0x00, serial2 = 0x01) {
       if (tipo === 0x01 && data.length >= 16) {
         const imei = [...data.slice(4, 12)].map(b => b.toString(16).padStart(2, '0')).join('');
         console.log(`📍 IMEI estimado: ${imei}`);
+
+      const resultado = await buscarImei(imei);
+if (!resultado.success) {
+      console.log(`❌ Acceso denegado: ${resultado.mensaje}`);
+      const nack = Buffer.from("787805010001d9dc0d0a", "hex");
+      socket.write(nack);
+      socket.destroy(); // 🔥 Cierra conexión
+      return;
+    }
+
+
+
+
         const ack = Buffer.from('787805010001d9dc0d0a', 'hex');
         socket.write(ack);
 

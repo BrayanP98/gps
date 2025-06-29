@@ -37,8 +37,14 @@
           mensajeDiv.textContent = "¡Usuario registrado exitosamente!";
           mensajeDiv.style.color = "green";
 
+          const{nombre,dispositios}=data.user
+        const query = new URLSearchParams({ disp: JSON.stringify(dispositios), });
+
+
+         //  window.location.href = `/login?mensaje=${encodeURIComponent(data.message || "Registro exitoso")}`;
            setTimeout(() => {
-          window.location.href = "/deler"; // o "/login.html" si usas HTML directo
+            window.location.href = `/deler?${query}`;
+          // o "/login.html" si usas HTML directo
         }, 1500); // redirige después de 1.5 segundos
         } else {
           mensajeDiv.textContent = data.error || "Error al registrar.";

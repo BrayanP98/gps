@@ -55,11 +55,28 @@ async function saveHistory (imei,lat,lon,course,speed){
 
 
 
+async function buscarImei(imei) {
+  try {
+      const registro = await history.findOne({ imei });
+    if (registro) {
+      return { success: true, registro};
+    } else {
+      return { success: false, mensaje: "IMEI no registrado" };
+    }
+  } catch (err) {
+    console.error("❌ Error al buscar IMEI:", err);
+    return { success: false, mensaje: "Error interno" };
+  }
+}
+
+
+
 
 module.exports = {
   bufferToHex,
   crc16,
-  saveHistory
+  saveHistory,
+  buscarImei
 
  
 };
