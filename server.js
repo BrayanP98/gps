@@ -236,9 +236,9 @@ if (tipo === 0xA0 && data.length >= 41) {
 🚗 Velocidad: ${speed} km/h | Curso: ${course}°
 📶 MCC: ${mcc}, MNC: ${mnc}, LAC: ${lac}, CellID: ${cellId}
 🔐 ID parcial: ${deviceId}`);
-
-saveHistory(imei, lat, lon, course, speed);
 let imei = conexionesIMEI.get(socket);
+saveHistory(imei, lat, lon, course, speed);
+
 enviarCoordenadas(lat, lon, course, speed, imei);
 
   // ACK
