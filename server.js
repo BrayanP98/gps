@@ -5,6 +5,11 @@ const WebSocket = require('ws');
 const path = require('path');
 const history=require('./src/modules/history.js');
 
+const dotenv = require("dotenv");
+const authRoutes = require("./routes/auth.js");
+
+dotenv.config();
+
 const { bufferToHex, crc16,  saveHistory } = require('./src/function.js');
 require("./database");
 // Configuración
@@ -23,12 +28,30 @@ server.listen(HTTP_PORT, () => {
 });
 
 const wss = new WebSocket.Server({ server }); 
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, 'public')));
-// Servir frontend
 
-app.get("/", async(req, res) => {
+app.use(express.json());            // ← para JSON
+app.use(express.urlencoded({ extended: true })); // ← para formularios tipo `x-www-form-urlencoded`
+
+// Servir frontend
+app.use("/api/auth", authRoutes);
+app.get("/deler", async(req, res) => {
  
-  res.render("index.html")
+  res.render("index")
+
+ 
+});
+app.get("/login", async(req, res) => {
+ 
+  res.render("login")
+
+ 
+});
+app.get("/sigInUp", async(req, res) => {
+ 
+  res.render("sinIN")
 
  
 });

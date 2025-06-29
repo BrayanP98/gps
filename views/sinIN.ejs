@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registro de Usuario</title>
+</head>
+<body>
+  <h2>Registro</h2>
+  <form id="registroForm">
+    <input type="text" id="nombre" placeholder="Nombre" required><br>
+    <input type="email" id="email" placeholder="Correo electrónico" required><br>
+    <input type="password" id="password" placeholder="Contraseña" required><br>
+    <button type="submit">Registrar</button>
+  </form>
+
+  <div id="mensaje"></div>
+
+  <script>
+    document.getElementById("registroForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const nombre = document.getElementById("nombre").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      console.log(nombre+email+password)
+
+      try {
+        const response = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({nombre, email, password })
+        });
+
+        const data = await response.json();
+        const mensajeDiv = document.getElementById("mensaje");
+
+        if (response.ok && data.success) {
+          mensajeDiv.textContent = "¡Usuario registrado exitosamente!";
+          mensajeDiv.style.color = "green";
+
+           setTimeout(() => {
+          window.location.href = "/login"; // o "/login.html" si usas HTML directo
+        }, 1500); // redirige después de 1.5 segundos
+        } else {
+          mensajeDiv.textContent = data.error || "Error al registrar.";
+          mensajeDiv.style.color = "red";
+        }
+      } catch (error) {
+        console.error("Error de conexión:", error);
+        document.getElementById("mensaje").textContent = "Error al conectar con el servidor.";
+      }
+    });
+  </script>
+</body>
+</html>

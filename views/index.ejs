@@ -11,18 +11,83 @@
   </style>
 </head>
 <body>
-  <div id="map">
+  
+  <div class="container">
+     <button onclick= getHistory() style="width: 30px; height: 20px; position:fixed; z-index:99 "></button>
+<div id="map">
 
-    <button onclick= getHistory() style="width: 30px; height: 20px; position:fixed; z-index:99 "></button>
+   
   </div>
+  <div id="lateralMain">
+    <h2>GPS Center</h2>
+     <!--<div id="mediaUser">
+      <img src="https://images.protrack365.com/portrait/3/31887_portrait_202108202159379_7_s.png" alt="">
+      <p>San Juan</p>
+    </div>-->
+
+
+    <div id="user_dispositive">
+      <a href="">dispositivos</a>
+      <div id="div_view_disposities">
+
+
+      </div>
+
+    </div>
+
+  </div>
+
   <div id="infoDisp"></div>
+
+  
+
  <style>
-
-
-
-  #map{
+  .container{
+   
+    position: relative;
+     width: 100%;
+    height:100%;
     
+}
+  
+#map{
+  position: relative;
+   width: 100%;
+   
+  
+}
 
+
+  #lateralMain{
+    width: 300px;
+    height: 100%;
+    position: fixed;
+    background: white;
+    top: 0;
+    z-index: 999;
+   text-align: center;
+
+  }
+#user_dispositive{
+  width: 100%;
+  height: 200px;
+}
+
+  #mediaUser{
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: fit-content;
+
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #mediaUser img{
+   
+    position: relative;
+     width: 100px;
+    height: 100px;
   }
     #infoDisp{
       display: flex;
@@ -73,6 +138,9 @@
 
     ws.onmessage = (msg) => {
       const { lat, lon, course, speed } = JSON.parse(msg.data);
+      
+      const disp=[]
+      disp.push
       marker.setLatLng([lat, lon]);
       marker.setRotationAngle(course || 0);
       marker.setIcon(speed > 0 ? iconMove : iconStop);
@@ -104,6 +172,15 @@
 
 });
     };
+
+    function pintar_dispositives(){
+
+      var div_view_disposities=document.getElementById("div_view_disposities")
+
+      
+
+
+    }
 
 
 
@@ -146,6 +223,6 @@
 }
 
   </script>
- 
+ </div>
 </body>
 </html>
