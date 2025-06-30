@@ -129,7 +129,7 @@ function enviarCoordenadas(lat, lon, course, speed, imei) {
 //console.log(`📡 WebSocket en ws://localhost:${PORT_WS}`);
 
 const conexionesIMEI = new Map();
-const bufferPendiente = new Map();
+const imeiSockets = new Map();
 ////////////////////////////////////////////////////////
 
 wss.on('connection', (ws) => {
@@ -156,7 +156,7 @@ wss.on('connection', (ws) => {
         const comandoHex =  construirComandoGT06(command, imei);
      
          //console.log( construirComandoGT06(command, imei))
-        const socket = conexionesIMEI.getKeyByValue(imei); // Busca socket por IMEI
+        const socket = imeiSockets.get(imei); // Busca socket por IMEI
   if (!socket) {
     return res.status(404).json({ success: false, message: "Dispositivo no conectado" });
   }
@@ -232,8 +232,10 @@ if (!resultado.success) {
 
          
         console.log('📤 ACK enviado para LOGIN');
+        conexionesIMEI.set(socket, imei);
+        imeiSockets.set(imei, socket);
 
-conexionesIMEI.set(socket, imei)
+
         
   
       }
