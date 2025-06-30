@@ -515,7 +515,7 @@ servert.listen(PUERTO, '0.0.0.0', () => {
 ///////////////////////////////////////////////comandos///////////////////////
 
 
-const { crc16 } = require('./src/function.js'); // Asegúrate de tener esta función
+
 
 function armarComandoGT06(tipo, imei) {
   // ComandoTexto solo se usa si tipo = "cutEngine" y quieres enviar algo tipo ASCII (ej: "RELAY,1#")
