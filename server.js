@@ -204,7 +204,17 @@ const servert = net.createServer((socket) => {
     // Distinguir si es encabezado 0x78 0x78 (paquete normal) o 0x79 0x79 (extendido)
     const header = data.slice(0, 2).toString('hex');
 
-
+function decodeIMEI(buffer) {
+  let imei = '';
+  for (let i = 0; i < buffer.length; i++) {
+    let byte = buffer[i];
+    let high = (byte >> 4) & 0x0F;
+    let low = byte & 0x0F;
+    imei += high.toString() + low.toString();
+  }
+  // A veces hay un "0" padding inicial
+  return imei.startsWith('0') ? imei.slice(1) : imei;
+}
     if (header === '7878') {
 
 
@@ -214,7 +224,8 @@ const servert = net.createServer((socket) => {
 
       // ✅ Login
       if (tipo === 0x01 && data.length >= 16) {
-        const imei = [...data.slice(4, 12)].map(b => b.toString(16).padStart(2, '0')).join('');
+        const imeiBuffer = data.slice(4, 12);
+          const imei = decodeIMEI(imeiBuffer);
         console.log(`📍 IMEI estimado: ${imei}`);
 
       const resultado = await buscarImei(imei);
