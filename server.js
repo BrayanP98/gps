@@ -153,7 +153,7 @@ wss.on('connection', (ws) => {
       var imei = data.imei;
         const command = data.command;
        
-        const comandoHex =  construirComandoGT06(command, imei);
+        const comandoHex =  armarComandoGT06(command, imei);
      console.log(comandoHex)
          //console.log( construirComandoGT06(command, imei))
         const socket = imeiSockets.get(imei); // Busca socket por IMEI
@@ -515,28 +515,33 @@ servert.listen(PUERTO, '0.0.0.0', () => {
 ///////////////////////////////////////////////comandos///////////////////////
 
 
-function construirComandoGT06(tipo, imei) {
-  const imeiHex = imei.slice(-8); // últimos 8 dígitos del IMEI
-  const imeiBuffer = Buffer.from(imeiHex, 'hex');
+const { crc16 } = require('./src/function.js'); // Asegúrate de tener esta función
+
+function armarComandoGT06(tipo, imei) {
+  // ComandoTexto solo se usa si tipo = "cutEngine" y quieres enviar algo tipo ASCII (ej: "RELAY,1#")
+
+  // Opcional: verificar que IMEI sea de 15 dígitos
+  if (!/^\d{15}$/.test(imei)) {
+    throw new Error("IMEI inválido");
+  }
 
   let payload;
 
   switch (tipo) {
-    case "cutEngine": // 🔴 Corte de motor
-     // payload = Buffer.from("001004", "hex");
+    case "cutEngine": // 🔴 Apagar motor
       payload = Buffer.from("RELAY,1#", 'ascii');
       break;
 
-    case "restoreEngine": // 🟢 Restaurar motor
-      payload = Buffer.from("001005", "hex");
+    case "restoreEngine": // 🟢 Encender motor
+      payload = Buffer.from("RELAY,0#", 'ascii');
       break;
 
-    case "reboot": // 🔁 Reiniciar dispositivo
-      payload = Buffer.from("001101", "hex");
+    case "reboot": // 🔁 Reinicio del dispositivo
+      payload = Buffer.from("RESET#", 'ascii');
       break;
 
-    case "requestPosition": // 📍 Solicitar posición
-      payload = Buffer.from("000000", "hex");
+    case "requestPosition": // 📍 Solicitar ubicación
+      payload = Buffer.from("WHERE#", 'ascii');
       break;
 
     default:
@@ -544,11 +549,10 @@ function construirComandoGT06(tipo, imei) {
   }
 
   // Armar paquete
-  const protocolo = Buffer.from([0x80]);
-  const serial = Buffer.from([0x00, 0x01]); // puedes incrementar si lo necesitas
-
-  const longPayload = Buffer.concat([protocolo, payload, serial]);
-  const longitud = Buffer.from([longPayload.length]);
+  const protocolId = Buffer.from([0x80]);
+  const serial = Buffer.from([0x00, 0x01]); // Puedes incrementarlo si deseas
+  const longPayload = Buffer.concat([protocolId, payload, serial]);
+  const length = Buffer.from([longPayload.length]);
 
   const crc = crc16(longPayload);
   const crcBuffer = Buffer.alloc(2);
@@ -557,17 +561,13 @@ function construirComandoGT06(tipo, imei) {
   const header = Buffer.from([0x78, 0x78]);
   const tail = Buffer.from([0x0D, 0x0A]);
 
-  const comandoCompleto = Buffer.concat([
+  const paquete = Buffer.concat([
     header,
-    longitud,
+    length,
     longPayload,
     crcBuffer,
-    tail,
+    tail
   ]);
 
-  return comandoCompleto;
+  return paquete;
 }
-
-
-
-
