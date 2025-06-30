@@ -165,10 +165,10 @@ if (!socket) {
 try {
   socket.write(comandoBuffer);
   console.log(`📤 Comando enviado a IMEI ${imei}:`, comandoBuffer.toString('hex'));
-  return res.json({ success: true });
+ /// return res.json({ success: true });
 } catch (err) {
   console.error("❌ Error al enviar comando:", err.message);
-  return res.status(500).json({ success: false, message: "Error al enviar comando" });
+ // return res.status(500).json({ success: false, message: "Error al enviar comando" });
 }
 
 
