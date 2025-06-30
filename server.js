@@ -152,9 +152,9 @@ wss.on('connection', (ws) => {
       if (data.tipo === 'commands' && data.command&& data.imei) {
       var imei = data.imei;
         const command = data.command;
-       console.log(command, imei)
+       
         const comandoHex =  construirComandoGT06(command, imei);
-     
+     console.log(comandoHex)
          //console.log( construirComandoGT06(command, imei))
         const socket = imeiSockets.get(imei); // Busca socket por IMEI
   if (!socket) {
@@ -165,9 +165,9 @@ wss.on('connection', (ws) => {
     const comandoBuffer = Buffer.from(comandoHex, 'hex');
     socket.write(comandoBuffer);
     console.log(`📤 Comando enviado a IMEI ${imei}: ${comandoHex}`);
-    return res.json({ success: true });
+   // return res.json({ success: true });
   } catch (err) {
-    return res.status(500).json({ success: false, message: "Error al enviar comando" });
+   // return res.status(500).json({ success: false, message: "Error al enviar comando" });
   }
 
 
