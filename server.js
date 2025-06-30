@@ -330,7 +330,7 @@ if (isLonNegative) longitude = -longitude;
 
  
 let imei = conexionesIMEI.get(socket);
-enviarCoordenadas(lat, lon, course, speed, imei); // 🔥 Aquí se manda al front
+enviarCoordenadas(latitude, longitude, course, speed, imei); // 🔥 Aquí se manda al front
  
  
  // Puedes responder con un ACK genérico si lo deseas:
