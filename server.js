@@ -524,7 +524,7 @@ function construirComandoGT06(tipo, imei) {
   switch (tipo) {
     case "cutEngine": // 🔴 Corte de motor
      // payload = Buffer.from("001004", "hex");
-      payload = Buffer.from(comandoTexto, 'ascii');
+      payload = Buffer.from("RELAY,1#", 'ascii');
       break;
 
     case "restoreEngine": // 🟢 Restaurar motor
