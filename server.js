@@ -153,7 +153,7 @@ wss.on('connection', (ws) => {
       var imei = data.imei;
         const command = data.command;
        
-       console.log(command,imie)
+       console.log(command,imei)
          //console.log( construirComandoGT06(command, imei))
       const comandoBuffer = armarComandoGT06(command, imei); // ← ya devuelve un Buffer
  console.log(armarComandoGT06(command, imei))
