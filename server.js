@@ -523,9 +523,9 @@ function armarComandoGT06(tipo, imei) {
   // ComandoTexto solo se usa si tipo = "cutEngine" y quieres enviar algo tipo ASCII (ej: "RELAY,1#")
 
   // Opcional: verificar que IMEI sea de 15 dígitos
-  if (!/^\d{15}$/.test(imei)) {
+ /* if (!/^\d{15}$/.test(imei)) {
     throw new Error("IMEI inválido");
-  }
+  }*/
 
   let payload;
 
