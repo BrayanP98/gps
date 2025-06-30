@@ -46,7 +46,7 @@ app.use(express.urlencoded({ extended: true })); // ← para formularios tipo `x
 
 app.use("/api/auth", authRoutes);
 
-app.get("/deler", async (req, res) => {
+app.get("/dealer", async (req, res) => {
   const token = req.cookies.tokenSEssion; // Nombre de la cookie
   console.log("Token desde cookie:", token);
   if (!token) {
@@ -62,7 +62,7 @@ app.get("/deler", async (req, res) => {
     console.log(user.dispositivos[1])
 
     
-    res.render("deler", {imeis: user.dispositivos });
+    res.render("dealer", {imeis: user.dispositivos });
   } catch (err) {
     console.error("Token inválido:", err);
     return res.redirect("/login");
@@ -87,6 +87,29 @@ app.get("/sigInUp", async(req, res) => {
 
  
 });
+app.get("/api/history", async (req, res) => {
+  const imei = req.query.imei;
+
+  console.log(imei)
+  if (!imei) {
+    return res.status(400).json({ success: false, error: "IMEI requerido" });
+  }
+
+  try {
+    const historial = await history.findOne({ imei });
+
+    if (!historial) {
+      return res.status(404).json({ success: false, error: "Historial no encontrado" });
+    }
+
+    res.json({ success: true, historial });
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Error interno" });
+  }
+});
+
+
+
 const clientesPorIMEI = new Map();
 // WebSocket
 function enviarCoordenadas(lat, lon, course, speed, imei) {
@@ -113,9 +136,10 @@ wss.on('connection', (ws) => {
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
-      if (data.tipo === 'suscribirse' && data.imei) {
-        const imei = data.imei;
+  
 
+      if (data.tipo === 'suscribirse' && data.imei) {
+      const imei = data.imei;
         // Vincular cliente a ese IMEI
         if (!clientesPorIMEI.has(imei)) {
           clientesPorIMEI.set(imei, new Set());
@@ -125,6 +149,33 @@ wss.on('connection', (ws) => {
         ws.imei = imei; // opcional, útil en desconexión
         console.log(`✅ Cliente suscrito al IMEI ${imei}`);
       }
+      if (data.tipo === 'commands' && data.command&& data.imei) {
+      var imei = data.imei;
+        const command = data.command;
+       console.log(command, imei)
+        const comandoHex =  construirComandoGT06(command, imei);
+     
+         //console.log( construirComandoGT06(command, imei))
+        const socket = conexionesIMEI.getKeyByValue(imei); // Busca socket por IMEI
+  if (!socket) {
+    return res.status(404).json({ success: false, message: "Dispositivo no conectado" });
+  }
+
+  try {
+    const comandoBuffer = Buffer.from(comandoHex, 'hex');
+    socket.write(comandoBuffer);
+    console.log(`📤 Comando enviado a IMEI ${imei}: ${comandoHex}`);
+    return res.json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: "Error al enviar comando" });
+  }
+
+
+
+      }
+
+
+
     } catch (err) {
       console.error("❌ Error al parsear mensaje del cliente:", err.message);
     }
@@ -139,7 +190,7 @@ wss.on('connection', (ws) => {
 });
 
 
-// 🚀 Crear servidor TCP
+// 🚀 Crear servidor TCP//////////////////////////////////////////////////////////////////////////////////////////////////////
 const servert = net.createServer((socket) => {
   const remote = `${socket.remoteAddress}:${socket.remotePort}`;
   console.log(`📡 Conexión desde ${remote}`);
@@ -457,24 +508,63 @@ servert.listen(PUERTO, '0.0.0.0', () => {
   console.log(`🚀 Servidor TCP escuchando en puerto ${PUERTO}`);
 });
 
-app.get("/api/history", async (req, res) => {
-  const imei = req.query.imei;
 
-  console.log(imei)
-  if (!imei) {
-    return res.status(400).json({ success: false, error: "IMEI requerido" });
+
+///////////////////////////////////////////////comandos///////////////////////
+
+
+function construirComandoGT06(tipo, imei) {
+  const imeiHex = imei.slice(-8); // últimos 8 dígitos del IMEI
+  const imeiBuffer = Buffer.from(imeiHex, 'hex');
+
+  let payload;
+
+  switch (tipo) {
+    case "cutEngine": // 🔴 Corte de motor
+      payload = Buffer.from("001004", "hex");
+      break;
+
+    case "restoreEngine": // 🟢 Restaurar motor
+      payload = Buffer.from("001005", "hex");
+      break;
+
+    case "reboot": // 🔁 Reiniciar dispositivo
+      payload = Buffer.from("001101", "hex");
+      break;
+
+    case "requestPosition": // 📍 Solicitar posición
+      payload = Buffer.from("000000", "hex");
+      break;
+
+    default:
+      throw new Error("Tipo de comando no reconocido");
   }
 
-  try {
-    const historial = await history.findOne({ imei });
+  // Armar paquete
+  const protocolo = Buffer.from([0x80]);
+  const serial = Buffer.from([0x00, 0x01]); // puedes incrementar si lo necesitas
 
-    if (!historial) {
-      return res.status(404).json({ success: false, error: "Historial no encontrado" });
-    }
+  const longPayload = Buffer.concat([protocolo, payload, serial]);
+  const longitud = Buffer.from([longPayload.length]);
 
-    res.json({ success: true, historial });
-  } catch (error) {
-    res.status(500).json({ success: false, error: "Error interno" });
-  }
-});
+  const crc = crc16(longPayload);
+  const crcBuffer = Buffer.alloc(2);
+  crcBuffer.writeUInt16BE(crc);
+
+  const header = Buffer.from([0x78, 0x78]);
+  const tail = Buffer.from([0x0D, 0x0A]);
+
+  const comandoCompleto = Buffer.concat([
+    header,
+    longitud,
+    longPayload,
+    crcBuffer,
+    tail,
+  ]);
+
+  return comandoCompleto;
+}
+
+
+
 

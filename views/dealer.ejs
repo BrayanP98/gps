@@ -27,7 +27,7 @@
 
 
     <div id="user_dispositive">
-      <a href="">dispositivos</a>
+      <a  id="send_commands">dispositivos</a>
       <div id="div_view_disposities">
 
 
@@ -139,6 +139,7 @@
     }).addTo(map);
 
 const ws = new WebSocket('ws://187.33.155.83:8080');
+//const ws = new WebSocket('https://animated-guacamole-rqqgj7w5r4q2x6x-8080.app.github.dev')
 
    const imeis = <%- JSON.stringify(imeis) %>;
 
@@ -152,6 +153,8 @@ const ws = new WebSocket('ws://187.33.155.83:8080');
 
     ws.onopen = () => {
       ws.send(JSON.stringify({ tipo: "suscribirse", imei: imeis[0]}));
+
+
     };
   }
 
@@ -202,10 +205,27 @@ const ws = new WebSocket('ws://187.33.155.83:8080');
 
     }
 
-
+var send_commads=document.getElementById("send_commands").onclick=function(){
+sendComands()
+}
 
 
     ////////////////////////
+
+    function sendComands(){
+      alert("sss")
+const imei="0869066061391919"
+      var comando="cutEngine"
+      
+
+      ws.send(JSON.stringify({ tipo: "commands", command: comando,imei:imei}));
+
+
+    
+  }
+
+      
+    
     async function getImeis() {
 
       const id="0869066061391919"

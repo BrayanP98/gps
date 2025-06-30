@@ -2,14 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Registro de Usuario</title>
+  <title>login de Usuario</title>
 </head>
 <body>
-  <h2>Registro</h2>
+  <h2>Loggear</h2>
   <form id="registroForm">
     <input type="email" id="email" placeholder="Correo electrónico" required><br>
     <input type="password" id="password" placeholder="Contraseña" required><br>
-    <button type="submit">Registrar</button>
+    <button type="submit">Loggear</button>
   </form>
 
   <div id="mensaje"></div>
@@ -43,7 +43,7 @@
             localStorage.setItem("token", data.token);
         
            setTimeout(() => {
-            window.location.href = `/deler`;
+            window.location.href = `/dealer`;
           // o "/login.html" si usas HTML directo
         }, 1500); // redirige después de 1.5 segundos
         } else {
