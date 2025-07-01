@@ -155,15 +155,15 @@ wss.on('connection', (ws) => {
        
        console.log(command,imei)
          //console.log( construirComandoGT06(command, imei))
-      const comandoBuffer = armarComandoGT06(command, imei); // ← ya devuelve un Buffer
- console.log(armarComandoGT06(command, imei))
+      const comandoBuffer = construirComandoGT06("RELAY,1#"); // ← ya devuelve un Buffer
+  console.log(construirComandoGT06("RELAY,0#"))
 const socket = imeiSockets.get(imei);
 if (!socket) {
   return res.status(404).json({ success: false, message: "Dispositivo no conectado" });
 }
 
 try {
-   const ack = Buffer.from('787814800C0000000052454C41592C31230001000327960D0A', 'hex');
+   const ack = Buffer.from(comandoBuffer, 'hex');
 
   socket.write(ack);
   console.log(`📤 Comando enviado a IMEI ${imei}:`, ack);
@@ -514,6 +514,20 @@ enviarCoordenadas(lat, lon, courseStatus, speed, imei);
 
   console.log('📤 ACK enviado para EXTENDIDO 0x94');
 }
+
+ if (tipoExtendido === 0x21) {
+    console.log('📦 Paquete extendido tipo 0x21 (respuesta a comandos)');
+
+    const payloadStart = 5; // después de tipo
+    const payloadEnd = data.length - 6; // antes del CRC y tail
+    const payload = data.slice(payloadStart, payloadEnd);
+
+    const textoRespuesta = payload.toString('ascii').trim();
+
+    console.log(`📨 RESPUESTA DEL DISPOSITIVO: ${textoRespuesta}`);
+
+    // ACK automático (opcional si no es requerido por el protocolo)
+  }
  else {
         console.log(`📦 Paquete extendido tipo desconocido: 0x${tipoExtendido.toString(16)}`);
       }
@@ -554,7 +568,7 @@ function armarComandoGT06(tipo, imei) {
 
   switch (tipo) {
     case "cutEngine": // 🔴 Apagar motor
-      payload = Buffer.from("RELAY,1", 'HEX');
+      payload = Buffer.from("RELAY,1", 'ascii');
       break;
 
     case "restoreEngine": // 🟢 Encender motor
@@ -596,3 +610,31 @@ function armarComandoGT06(tipo, imei) {
 
   return paquete;
 }
+
+const crc16 = require('./crc16'); // Asegúrate de tener función CRC16 (modbus, checksum estilo GT06)
+
+function construirComandoGT06(texto, flags = [0x00, 0x00, 0x00, 0x00], serial = [0x00, 0x01]) {
+  const header = Buffer.from([0x78, 0x78]);
+  const protocol = Buffer.from([0x80]);
+
+  const flagsBuffer = Buffer.from(flags);
+  const asciiBuffer = Buffer.from(texto, 'ascii'); // Ej: RELAY,1#
+
+  const commandLength = Buffer.from([flagsBuffer.length + asciiBuffer.length]);
+  const serialBuffer = Buffer.from(serial);
+
+  const cuerpo = Buffer.concat([protocol, commandLength, flagsBuffer, asciiBuffer, serialBuffer]);
+
+  const crc = crc16(cuerpo); // CRC16 de todo el cuerpo
+  const crcBuffer = Buffer.alloc(2);
+  crcBuffer.writeUInt16BE(crc);
+
+  const tail = Buffer.from([0x0D, 0x0A]);
+
+  const length = Buffer.from([cuerpo.length + 2]); // Longitud desde protocolo hasta CRC (sin incluir header ni tail)
+
+  const paquete = Buffer.concat([header, length, cuerpo, crcBuffer, tail]);
+
+  return paquete;
+}
+
