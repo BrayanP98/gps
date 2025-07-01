@@ -514,6 +514,19 @@ enviarCoordenadas(lat, lon, courseStatus, speed, imei);
 
   console.log('📤 ACK enviado para EXTENDIDO 0x94');
 }
+  if (tipoExtendido === 0x21) {
+    console.log('📦 Paquete extendido tipo 0x21 (respuesta a comandos)');
+
+    const payloadStart = 5; // después de tipo
+    const payloadEnd = data.length - 6; // antes del CRC y tail
+    const payload = data.slice(payloadStart, payloadEnd);
+
+    const textoRespuesta = payload.toString('ascii').trim();
+
+    console.log(`📨 RESPUESTA DEL DISPOSITIVO: ${textoRespuesta}`);
+
+    // ACK automático (opcional si no es requerido por el protocolo)
+  }
  else {
         console.log(`📦 Paquete extendido tipo desconocido: 0x${tipoExtendido.toString(16)}`);
       }
