@@ -163,7 +163,7 @@ if (!socket) {
 }
 
 try {
-   const ack = Buffer.from('78780A8056455253494F4E230001A47E0D0A', 'hex');
+   const ack = Buffer.from('787814800C0000000052454C41592C31230001000327960D0A', 'hex');
 
   socket.write(ack);
   console.log(`📤 Comando enviado a IMEI ${imei}:`, ack);
