@@ -15,7 +15,7 @@ dotenv.config();
 
 const socketIMEIs = new Map();
 
-const { bufferToHex, crc16,  saveHistory, buscarImei} = require('./src/function.js');
+const { bufferToHex, crc16,  saveHistory, buscarImei,crc16xmodem} = require('./src/function.js');
 require("./database");
 // Configuración
 const PUERTO= 5000;
@@ -165,6 +165,7 @@ if (!socket) {
 try {
    const ack = Buffer.from(comando);
  
+
 
                            
    /* 
@@ -622,7 +623,7 @@ function armarComandoGT06(tipo, imei) {
 }
 
 
-const crc161 = require('crc').crc16xmodem; 
+
 
 function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
   const PROTOCOLO = 0x80;
@@ -649,7 +650,7 @@ const comandoPayload = Buffer.concat([
   const longitud = Buffer.from([comandoPayload.length]);
 
   // CRC sobre todo desde protocolo hasta número de serie
-  const crc = crc161(comandoPayload);
+  const crc = crc16xmodem(comandoPayload);
   const CRC = Buffer.alloc(2);
   CRC.writeUInt16BE(crc);
 
