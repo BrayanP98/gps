@@ -549,19 +549,19 @@ function armarComandoGT06(tipo, imei) {
 
   switch (tipo) {
     case "cutEngine": // 🔴 Apagar motor
-      payload = Buffer.from("RELAY,1#", 'ascii');
+      payload = Buffer.from("RELAY,1", 'ascii');
       break;
 
     case "restoreEngine": // 🟢 Encender motor
-      payload = Buffer.from("RELAY,0#", 'ascii');
+      payload = Buffer.from("RELAY,0", 'ascii');
       break;
 
     case "reboot": // 🔁 Reinicio del dispositivo
-      payload = Buffer.from("RESET#", 'ascii');
+      payload = Buffer.from("RESET", 'ascii');
       break;
 
     case "requestPosition": // 📍 Solicitar ubicación
-      payload = Buffer.from("WHERE#", 'ascii');
+      payload = Buffer.from("WHERE", 'ascii');
       break;
 
     default:
