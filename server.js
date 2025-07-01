@@ -163,7 +163,8 @@ if (!socket) {
 }
 
 try {
-  socket.write(comandoBuffer);
+   const ack = Buffer.from('78780A8052454C41592C310001C4500D0A', 'hex');
+  socket.write(ack);
   console.log(`📤 Comando enviado a IMEI ${imei}:`, comandoBuffer.toString('hex'));
  /// return res.json({ success: true });
 } catch (err) {
@@ -240,7 +241,7 @@ if (!resultado.success) {
 
 
 
-        const ack = Buffer.from('78780A8052454C41592C310001C4500D0A', 'hex');
+        const ack = Buffer.from('787805010001d9dc0d0a', 'hex');
         socket.write(ack);
 
          
