@@ -162,6 +162,15 @@ if (!socket) {
   return res.status(404).json({ success: false, message: "Dispositivo no conectado" });
 }
 
+/*78 78 11 80 0b 00 00 00 00 52 45 4c 41 59 2c 30 00 01 ff bc 0d 0a
+78 78 12 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 00 02 d5 89            0d 0a
+
+78 78 14 80 0C 00 00 00 00 52 45 4C 41 59 2C 31 23 00 01 00 03 27 96 0D 0A
+
+78 78 12 80 0c 00 00 00 00 52 45 4c 41 59 2c 30 23 00 01 29 88 0d 0a>
+📤 Comando enviado a IMEI 869066061391919: <Buffer 78 78 12 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 d5 89 0d 0a>
+
+*/
 try {
    const ack = Buffer.from(comandoBuffer, 'hex');
 
@@ -633,7 +642,7 @@ function construirComandoGT06(texto, flags = [0x00, 0x00, 0x00, 0x00], serial = 
 
   const length = Buffer.from([cuerpo.length + 2]); // Longitud desde protocolo hasta CRC (sin incluir header ni tail)
 
-  const paquete = Buffer.concat([header, length, cuerpo, crcBuffer, tail]);
+  const paquete = Buffer.concat([header, length, cuerpo, crcBuffer,serialBuffer, tail]);
 
   return paquete;
 }
