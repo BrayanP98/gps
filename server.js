@@ -155,8 +155,8 @@ wss.on('connection', (ws) => {
        
        console.log(command,imei)
          //console.log( construirComandoGT06(command, imei))
-      const comandoBuffer = armarComandoGT06(command, imei); // ← ya devuelve un Buffer
- console.log(armarComandoGT06(command, imei))
+      const comando = construirComandoGT06("RELAY,0#"); ; // ← ya devuelve un Buffer
+ console.log(construirComandoGT06("RELAY,0#"))
 const socket = imeiSockets.get(imei);
 if (!socket) {
   return res.status(404).json({ success: false, message: "Dispositivo no conectado" });
@@ -166,7 +166,7 @@ try {
    const ack = Buffer.from('787814800C0000000052454C41592C30230001000327960D0A', 'hex');
                                    
 
-  socket.write(ack);
+  socket.write(comando);
   console.log(`📤 Comando enviado a IMEI ${imei}:`, ack);
  /// return res.json({ success: true });
 } catch (err) {
@@ -610,3 +610,44 @@ function armarComandoGT06(tipo, imei) {
 
   return paquete;
 }
+
+
+
+function construirComandoGT06(comandoTexto, serial = 0x0001, idioma = 0x0001) {
+  const PROTOCOLO = 0x80;
+  const SERVER_FLAG = Buffer.from([0x00, 0x00, 0x00, 0x00]);
+  const COMANDO_ASCII = Buffer.from(comandoTexto, 'ascii');
+  const IDIOMA = Buffer.alloc(2);
+  IDIOMA.writeUInt16BE(idioma); // 00 01 para chino, 00 02 para inglés
+
+  const NUMERO_SERIE = Buffer.alloc(2);
+  NUMERO_SERIE.writeUInt16BE(serial);
+
+  const comandoPayload = Buffer.concat([
+    Buffer.from([PROTOCOLO]),
+    Buffer.from([SERVER_FLAG.length + COMANDO_ASCII.length]), // longitud del comando
+    SERVER_FLAG,
+    COMANDO_ASCII,
+    IDIOMA,
+    NUMERO_SERIE
+  ]);
+
+  // Longitud total sin header/tail: desde protocolo (0x80) hasta serie
+  const longitud = Buffer.from([comandoPayload.length]);
+
+  // CRC sobre todo desde protocolo hasta número de serie
+  const crc = crc16(comandoPayload);
+  const CRC = Buffer.alloc(2);
+  CRC.writeUInt16BE(crc);
+
+  const paquete = Buffer.concat([
+    Buffer.from([0x78, 0x78]),
+    longitud,
+    comandoPayload,
+    CRC,
+    Buffer.from([0x0D, 0x0A])
+  ]);
+
+  return paquete;
+}
+
