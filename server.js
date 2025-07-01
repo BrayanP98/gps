@@ -163,7 +163,7 @@ if (!socket) {
 }
 
 try {
-   const ack = Buffer.from('787814800c0000000052454c41592c30230001000327960d0a', 'hex');
+   const ack = Buffer.from('787814800C0000000052454C41592C30230001000327960D0A', 'hex');
                                    
 
   socket.write(ack);
