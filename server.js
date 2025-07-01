@@ -255,9 +255,12 @@ if (!resultado.success) {
 console.log(`📦 Tipo de paquete recibido: 0x${tipo.toString(16)}`);
 
 if (tipo === 0x8A || tipo === 0x08) {
+
+    const cmdResponse = data.slice(4, 6).toString('hex');
+
   const payload = data.slice(3, data.length - 5); // omite cabecera y CRC
   const texto = payload.toString('ascii');
-  console.log("📨 RESPUESTA DOISPOSITIVOOOOOOO:", texto);
+  console.log("📨 RESPUESTA DOISPOSITIVOOOOOOO:", texto+ cmdResponse);
 }
 
 
