@@ -31,11 +31,10 @@ function crc16xmodem(buffer) {
     crc ^= buffer[i] << 8;
     for (let j = 0; j < 8; j++) {
       if ((crc & 0x8000) !== 0) {
-        crc = (crc << 1) ^ 0x1021;
+        crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
       } else {
-        crc <<= 1;
+        crc = (crc << 1) & 0xFFFF;
       }
-      crc &= 0xFFFF;
     }
   }
   return crc;

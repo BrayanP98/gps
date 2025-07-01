@@ -15,7 +15,7 @@ dotenv.config();
 
 const socketIMEIs = new Map();
 
-const { bufferToHex, crc16,  saveHistory, buscarImei} = require('./src/function.js');
+const { bufferToHex, crc16,  saveHistory, buscarImei,crc16xmodem} = require('./src/function.js');
 require("./database");
 // Configuración
 const PUERTO= 5000;
@@ -155,7 +155,7 @@ wss.on('connection', (ws) => {
        
        console.log(command,imei)
          //console.log( construirComandoGT06(command, imei))
-      const comando = construirComandoGT06("RELAY,1#"); ; // ← ya devuelve un Buffer
+     ; // ← ya devuelve un Buffer
 
 const socket = imeiSockets.get(imei);
 if (!socket) {
@@ -204,6 +204,10 @@ try {
     }
   });
 });
+
+
+
+
 
 
 // 🚀 Crear servidor TCP//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -623,7 +627,7 @@ function armarComandoGT06(tipo, imei) {
 }
 
 
-const crc161 = require('crc').crc16xmodem; 
+
 
 function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
   const PROTOCOLO = 0x80;
@@ -634,7 +638,7 @@ function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
 
   const NUMERO_SERIE = Buffer.alloc(2);
   NUMERO_SERIE.writeUInt16BE(serial);
-const commandLength = SERVER_FLAG.length + COMANDO_ASCII.length + IDIOMA.length + NUMERO_SERIE.length;
+const commandLength = SERVER_FLAG.length + COMANDO_ASCII.length ;
 
 const comandoPayload = Buffer.concat([
   Buffer.from([PROTOCOLO]),
@@ -650,18 +654,39 @@ const comandoPayload = Buffer.concat([
   const longitud = Buffer.from([comandoPayload.length]);
 
   // CRC sobre todo desde protocolo hasta número de serie
-  const crc = crc161(comandoPayload);
+
+
+  const crc = crc16xmodem(comandoPayload);
   const CRC = Buffer.alloc(2);
   CRC.writeUInt16BE(crc);
+ 
+    console.log(crc)
+
+const comandoPayload1 = Buffer.concat([
+  comandoPayload,
+  CRC
+]);
+
+ const longitud1 = Buffer.from([comandoPayload1.length]);
+ const dataParaCRC = Buffer.concat([
+  Buffer.from(longitud1), // longitud total del paquete desde protocolo
+  comandoPayload,      // incluye desde 0x80 hasta número de serie
+]);
+  const crc1 = crc16xmodem(dataParaCRC);
+  const CRC1 = Buffer.alloc(2);
+  CRC1.writeUInt16BE(crc1);
+console.log(dataParaCRC)
 
   const paquete = Buffer.concat([
     Buffer.from([0x78, 0x78]),
-    longitud,
+    longitud1,
     comandoPayload,
-    CRC,
+    CRC1,
     Buffer.from([0x0D, 0x0A])
   ]);
 
   return paquete;
 }
 
+ const comando = construirComandoGT06("RELAY,1#"); 
+ console.log(construirComandoGT06("RELAY,1#"))
