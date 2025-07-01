@@ -621,7 +621,7 @@ function armarComandoGT06(tipo, imei) {
   return paquete;
 }
 
-
+const crc161 = require('crc').crc16xmodem; 
 
 function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
   const PROTOCOLO = 0x80;
@@ -632,21 +632,23 @@ function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
 
   const NUMERO_SERIE = Buffer.alloc(2);
   NUMERO_SERIE.writeUInt16BE(serial);
+const commandLength = SERVER_FLAG.length + COMANDO_ASCII.length + IDIOMA.length + NUMERO_SERIE.length;
 
-  const comandoPayload = Buffer.concat([
-    Buffer.from([PROTOCOLO]),
-    Buffer.from([SERVER_FLAG.length + COMANDO_ASCII.length]), // longitud del comando
-    SERVER_FLAG,
-    COMANDO_ASCII,
-    IDIOMA,
-    NUMERO_SERIE
-  ]);
+const comandoPayload = Buffer.concat([
+  Buffer.from([PROTOCOLO]),
+  Buffer.from([commandLength]), // longitud del comando
+  SERVER_FLAG,
+  COMANDO_ASCII,
+  IDIOMA,
+  NUMERO_SERIE
+]);
+
 
   // Longitud total sin header/tail: desde protocolo (0x80) hasta serie
   const longitud = Buffer.from([comandoPayload.length]);
 
   // CRC sobre todo desde protocolo hasta número de serie
-  const crc = crc16(comandoPayload);
+  const crc = crc161(comandoPayload);
   const CRC = Buffer.alloc(2);
   CRC.writeUInt16BE(crc);
 
