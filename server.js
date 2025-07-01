@@ -155,12 +155,13 @@ wss.on('connection', (ws) => {
        
        console.log(command,imei)
          //console.log( construirComandoGT06(command, imei))
-      const comandoBuffer = construirComandoGT06("RELAY,0"); // ← ya devuelve un Buffer
+      const comandoBuffer = construirComandoGT06("RELAY,0#"); // ← ya devuelve un Buffer
   console.log(construirComandoGT06("RELAY,1#"))
 const socket = imeiSockets.get(imei);
 if (!socket) {
   return res.status(404).json({ success: false, message: "Dispositivo no conectado" });
 }
+
 
 
 
@@ -643,6 +644,8 @@ function construirComandoGT06(texto, flags = [0x00, 0x00, 0x00, 0x00], serial = 
   const crc = crc16(cuerpo); // CRC16 de todo el cuerpo
   const crcBuffer = Buffer.alloc(2);
   crcBuffer.writeUInt16BE(crc);
+  
+
 
   const tail = Buffer.from([0x0D, 0x0A]);
  //78 78 12 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 d5 89  0d 0a
