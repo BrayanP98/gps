@@ -254,6 +254,13 @@ if (!resultado.success) {
       }
 console.log(`📦 Tipo de paquete recibido: 0x${tipo.toString(16)}`);
 
+if (tipo === 0x8A || tipo === 0x08) {
+  const payload = data.slice(3, data.length - 5); // omite cabecera y CRC
+  const texto = payload.toString('ascii');
+  console.log("📨 RESPUESTA DOISPOSITIVOOOOOOO:", texto);
+}
+
+
 /////////////////////////////////////////////
 // ✅ Estado LBS tipo 0x13
 if (tipo === 0x13 && data.length >= 15) {
