@@ -611,7 +611,7 @@ function armarComandoGT06(tipo, imei) {
   return paquete;
 }
 
-const crc16 = require('./crc16'); // Asegúrate de tener función CRC16 (modbus, checksum estilo GT06)
+
 
 function construirComandoGT06(texto, flags = [0x00, 0x00, 0x00, 0x00], serial = [0x00, 0x01]) {
   const header = Buffer.from([0x78, 0x78]);
