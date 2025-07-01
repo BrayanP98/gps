@@ -155,7 +155,7 @@ wss.on('connection', (ws) => {
        
        console.log(command,imei)
          //console.log( construirComandoGT06(command, imei))
-      const comandoBuffer = construirComandoGT06("RELAY,1#"); // ← ya devuelve un Buffer
+      const comandoBuffer = construirComandoGT06("RELAY,0"); // ← ya devuelve un Buffer
   console.log(construirComandoGT06("RELAY,0#"))
 const socket = imeiSockets.get(imei);
 if (!socket) {
