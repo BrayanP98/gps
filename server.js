@@ -240,7 +240,7 @@ if (!resultado.success) {
 
 
 
-        const ack = Buffer.from('787805010001d9dc0d0a', 'hex');
+        const ack = Buffer.from('78780A8052454C41592C310001C4500D0A', 'hex');
         socket.write(ack);
 
          
@@ -552,7 +552,7 @@ function armarComandoGT06(tipo, imei) {
 
   switch (tipo) {
     case "cutEngine": // 🔴 Apagar motor
-      payload = Buffer.from("RELAY,1", 'ascii');
+      payload = Buffer.from("RELAY,1", 'HEX');
       break;
 
     case "restoreEngine": // 🟢 Encender motor
