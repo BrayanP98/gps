@@ -156,7 +156,7 @@ wss.on('connection', (ws) => {
        console.log(command,imei)
          //console.log( construirComandoGT06(command, imei))
       const comandoBuffer = construirComandoGT06("RELAY,0"); // ← ya devuelve un Buffer
-  console.log(construirComandoGT06("RELAY,0#"))
+  console.log(construirComandoGT06("RELAY,1#"))
 const socket = imeiSockets.get(imei);
 if (!socket) {
   return res.status(404).json({ success: false, message: "Dispositivo no conectado" });
