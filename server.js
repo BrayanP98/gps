@@ -167,7 +167,12 @@ try {
  console.log(ack)
     console.log(construirComandoGT06("RELAY,1#"))
 
-                                   
+                           
+   /* 
+<Buffer 78 78 14 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 00 03 27 96 0d 0a>
+<Buffer 78 78 12 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 00 01 cf 67 0d 0a>
+<Buffer 78 78 14 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 00 03 27 96 0d 0a>*/
+
 
   socket.write(comando);
   console.log(`📤 Comando enviado a IMEI ${imei}:`, ack);
@@ -616,7 +621,7 @@ function armarComandoGT06(tipo, imei) {
 
 
 
-function construirComandoGT06(comandoTexto, serial = 0x0001, idioma = 0x0001) {
+function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
   const PROTOCOLO = 0x80;
   const SERVER_FLAG = Buffer.from([0x00, 0x00, 0x00, 0x00]);
   const COMANDO_ASCII = Buffer.from(comandoTexto, 'ascii');
