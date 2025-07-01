@@ -163,9 +163,9 @@ if (!socket) {
 }
 
 try {
-   const ack = Buffer.from('78 78 0A 80 56 45 52 53 49 4F 4E 23 00 01 A4 7E 0D 0A', 'hex');
+   const ack = Buffer.from('78780A8056455253494F4E230001A47E0D0A', 'hex');
 
-  socket.write('78 78 0A 80 56 45 52 53 49 4F 4E 23 00 01 A4 7E 0D 0A');
+  socket.write(ack);
   console.log(`📤 Comando enviado a IMEI ${imei}:`, ack);
  /// return res.json({ success: true });
 } catch (err) {
