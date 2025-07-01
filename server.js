@@ -163,18 +163,20 @@ if (!socket) {
 }
 
 try {
-   const ack = Buffer.from('787814800C0000000052454C41592C31230001000327960D0A', 'hex');
- console.log(ack)
-    console.log(construirComandoGT06("RELAY,1#"))
+   const ack = Buffer.from('787814800C0000000052454C41592C31231001000327960D0A', 'hex');
+ 
 
                            
    /* 
 <Buffer 78 78 14 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 00 03 27 96 0d 0a>
 <Buffer 78 78 12 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 00 01 cf 67 0d 0a>
+<Buffer 78 78 14 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 00 03 27 96 0d 0a>
+<Buffer 78 78 14 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 00 03 27 96 0d 0a>
+<Buffer 78 78 12 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 00 03 0e e6 0d 0a>
 <Buffer 78 78 14 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 00 03 27 96 0d 0a>*/
 
 
-  socket.write(comando);
+  socket.write(ack);
   console.log(`📤 Comando enviado a IMEI ${imei}:`, ack);
  /// return res.json({ success: true });
 } catch (err) {
