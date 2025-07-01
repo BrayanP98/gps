@@ -163,7 +163,7 @@ if (!socket) {
 }
 
 try {
-   const ack = Buffer.from('787814800C0000000052454C41592C31231001000327960D0A', 'hex');
+   const ack = Buffer.from(comando);
  
 
                            
@@ -620,6 +620,7 @@ function armarComandoGT06(tipo, imei) {
 
   return paquete;
 }
+
 
 const crc161 = require('crc').crc16xmodem; 
 
