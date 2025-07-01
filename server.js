@@ -627,7 +627,7 @@ function armarComandoGT06(tipo, imei) {
 
 
 
-function construirComandoGT06(texto, flags = [0x00, 0x00, 0x00, 0x00], serial = [0x00, 0x01]) {
+function construirComandoGT06(texto, flags = [0x00, 0x00, 0x00, 0x00], serial = [0x00, 0x01],lang=[0x00, 0x01]) {
   const header = Buffer.from([0x78, 0x78]);
   const protocol = Buffer.from([0x80]);
 
@@ -636,15 +636,16 @@ function construirComandoGT06(texto, flags = [0x00, 0x00, 0x00, 0x00], serial = 
 
   const commandLength = Buffer.from([flagsBuffer.length + asciiBuffer.length]);
   const serialBuffer = Buffer.from(serial);
+  const langBuffer = Buffer.from(lang);
 
-  const cuerpo = Buffer.concat([protocol, commandLength, flagsBuffer, asciiBuffer]);
+  const cuerpo = Buffer.concat([protocol, commandLength, flagsBuffer, asciiBuffer,langBuffer, serialBuffer]);
 
   const crc = crc16(cuerpo); // CRC16 de todo el cuerpo
   const crcBuffer = Buffer.alloc(2);
   crcBuffer.writeUInt16BE(crc);
 
   const tail = Buffer.from([0x0D, 0x0A]);
-// 78 78 12 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 d5 89  0d 0a
+ //78 78 12 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 d5 89  0d 0a
 
 
   const length = Buffer.from([cuerpo.length + 2]); // Longitud desde protocolo hasta CRC (sin incluir header ni tail)
