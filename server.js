@@ -163,8 +163,8 @@ if (!socket) {
 }
 
 try {
-   //const ack = Buffer.from('787814800C0000000052454C41592C30230001000327960D0A', 'hex');
-    const ack = Buffer.from(comando, 'hex');
+   const ack = Buffer.from('787814800C0000000052454C41592C30230001000323BD0D0A', 'hex');
+    //const ack = Buffer.from(comando, 'hex');
    //const ack = Buffer.from('787814800C0000000052454C41592C3023001000344ECA30D0A', 'hex');
  
 
