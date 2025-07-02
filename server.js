@@ -154,8 +154,8 @@ wss.on('connection', (ws) => {
         const command = data.command;
        console.log(command)
 
-        const comando = construirComandoGT06("RELAY,0"); 
-          console.log(construirComandoGT06("RELAY,0"))
+        const comando = construirComandoGT06("RELAY,0#"); 
+          console.log(construirComandoGT06("RELAY,0#"))
 
 const socket = imeiSockets.get(imei);
 if (!socket) {
