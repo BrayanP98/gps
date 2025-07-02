@@ -152,7 +152,7 @@ wss.on('connection', (ws) => {
       if (data.tipo === 'commands' && data.command&& data.imei) {
       var imei = data.imei;
         const command = data.command;
-       onsole.log(command)
+       console.log(command)
 
        // const comando = construirComandoGT06("RELAY,1#"); 
          // console.log(construirComandoGT06("RELAY,1#"))
