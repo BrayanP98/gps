@@ -173,7 +173,7 @@ try {
 
 
   socket.write(ack);
-  console.log(`📤 Comando enviado a IMEI ${imei}:`, ack);
+  console.log(`📤 Comando enviado a IMEI ${imei}:`, );
  /// return res.json({ success: true });
 } catch (err) {
   console.error("❌ Error al enviar comando:", err.message);
