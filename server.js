@@ -154,8 +154,8 @@ wss.on('connection', (ws) => {
         const command = data.command;
        console.log(command)
 
-        const comando = construirComandoGT06("RELAY,0#"); 
-          console.log(construirComandoGT06("RELAY,0#"))
+        const comando = construirComandoGT06("RELAY,1#"); 
+          console.log(construirComandoGT06("RELAY,1#"))
 
 const socket = imeiSockets.get(imei);
 if (!socket) {
@@ -163,7 +163,7 @@ if (!socket) {
 }
 
 try {
-   const ack = Buffer.from(comando, 'hex');
+   const ack = Buffer.from('787814800C0000000052454C41592C30230001000327960D0A', 'hex');
    //const ack = Buffer.from('787814800C0000000052454C41592C3023001000344ECA30D0A', 'hex');
  
 
