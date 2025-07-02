@@ -704,7 +704,7 @@ function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
   ]);
 
   const longitud = Buffer.from([payload.length]);
-  const crc = crc16Xmodem(payload);
+  const crc = crc16xmodem(payload);
   const crcBuffer = Buffer.alloc(2);
   crcBuffer.writeUInt16BE(crc);
 
