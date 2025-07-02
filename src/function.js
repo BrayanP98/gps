@@ -41,6 +41,22 @@ function crc16xmodem(buffer) {
 }
 
 
+function crc16IBMSDLC(buffer) {
+  let crc = 0x0000;
+  for (let i = 0; i < buffer.length; i++) {
+    crc ^= buffer[i];
+    for (let j = 0; j < 8; j++) {
+      if (crc & 0x0001) {
+        crc = (crc >> 1) ^ 0xA001;
+      } else {
+        crc >>= 1;
+      }
+    }
+  }
+  return crc;
+}
+
+
 
 async function saveHistory (imei,lat,lon,course,speed){
 //let dispositive = await history.findOne({ imei });
@@ -93,7 +109,8 @@ module.exports = {
   crc16,
   saveHistory,
   buscarImei,
-  crc16xmodem
+  crc16xmodem,
+  crc16IBMSDLC
 
  
 };

@@ -15,7 +15,7 @@ dotenv.config();
 
 const socketIMEIs = new Map();
 
-const { bufferToHex, crc16,  saveHistory, buscarImei,crc16xmodem} = require('./src/function.js');
+const { bufferToHex, crc16,  saveHistory, buscarImei,crc16xmodem,crc16IBMSDLC} = require('./src/function.js');
 require("./database");
 // Configuración
 const PUERTO= 5000;
@@ -154,8 +154,8 @@ wss.on('connection', (ws) => {
         const command = data.command;
        console.log(command)
 
-        //const comando = construirComandoGT06("RELAY,1#"); 
-          //console.log(construirComandoGT06("RELAY,1#"))
+        const comando = construirComandoGT06("RELAY,1#"); 
+          console.log(construirComandoGT06("RELAY,1#"))
 
 const socket = imeiSockets.get(imei);
 if (!socket) {
@@ -704,7 +704,7 @@ function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
   ]);
 
   const longitud = Buffer.from([payload.length]);
-  const crc = crc16xmodem(payload);
+  const crc = crc16IBMSDLC(payload);
   const crcBuffer = Buffer.alloc(2);
   crcBuffer.writeUInt16BE(crc);
 
@@ -719,7 +719,7 @@ const comandoPayload2 = Buffer.concat([
   payload
   
 ]);
-const crc1 = crc16xmodem(comandoPayload2);
+const crc1 = crc16IBMSDLC(comandoPayload2);
   const crcBuffer1 = Buffer.alloc(2);
   crcBuffer1.writeUInt16BE(crc1);
   const paquete = Buffer.concat([
