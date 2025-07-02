@@ -152,9 +152,10 @@ wss.on('connection', (ws) => {
       if (data.tipo === 'commands' && data.command&& data.imei) {
       var imei = data.imei;
         const command = data.command;
-       
-        const comando = construirComandoGT06("RELAY,1#"); 
-          console.log(construirComandoGT06("RELAY,1#"))
+       onsole.log(command)
+
+       // const comando = construirComandoGT06("RELAY,1#"); 
+         // console.log(construirComandoGT06("RELAY,1#"))
 
 const socket = imeiSockets.get(imei);
 if (!socket) {
@@ -455,12 +456,12 @@ enviarCoordenadas(latitude, longitude, course, speed, imei); // 🔥 Aquí se ma
   const speed = data[19];
 
   const courseStatus = data.readUInt16BE(20);
-  const isLatNegative = (courseStatus & 0x8000) !== 0;
+ const isLatNegative = (courseStatus & 0x8000) !== 0;
   const isLonNegative = (courseStatus & 0x4000) !== 0;
+  
 
-  if (isLatNegative) lat *= -1;
-  if (isLonNegative) lon *= -1;
-
+  if (isLatNegative) lat *-1;
+  if (isLonNegative) lon *-1;
   console.log(`📍 POSICIÓN:
 🗓️ ${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}
 📡 Satélites: ${satellites}
