@@ -154,8 +154,8 @@ wss.on('connection', (ws) => {
         const command = data.command;
        console.log(command)
 
-       // const comando = construirComandoGT06("RELAY,1#"); 
-         // console.log(construirComandoGT06("RELAY,1#"))
+        const comando = construirComandoGT06("RELAY,1#"); 
+          console.log(construirComandoGT06("RELAY,1#"))
 
 const socket = imeiSockets.get(imei);
 if (!socket) {
@@ -163,7 +163,7 @@ if (!socket) {
 }
 
 try {
-   const ack = Buffer.from('787814800C0000000052454C41592C31230001000327960D0A', 'hex');
+   const ack = Buffer.from(comando, 'hex');
    //const ack = Buffer.from('787814800C0000000052454C41592C3023001000344ECA30D0A', 'hex');
  
 
@@ -284,11 +284,11 @@ if (tipo === 0x13 && data.length >= 15) {
   const lac = (data[7] << 8) | data[8];
   const cellId = (data[9] << 8) | data[10];
 
-  console.log(`📦 Tipo de paquete 0x13 (Estado LBS / Heartbeat)
+ /* console.log(`📦 Tipo de paquete 0x13 (Estado LBS / Heartbeat)
 📶 MCC: ${mcc}
 📡 MNC: ${mnc}
 🏙️  LAC: ${lac}
-📍 Cell ID: ${cellId}`);
+📍 Cell ID: ${cellId}`);*/
 
   const serial1 = data[data.length - 6];
   const serial2 = data[data.length - 5];
@@ -338,14 +338,14 @@ if (tipo === 0xA0 && data.length >= 41) {
 
   const deviceId = [...data.slice(31, 35)].map(b => b.toString(16).padStart(2, '0')).join('');
 
-  console.log(`📦 Tipo de paquete 0xA0 (Posición extendida)
+ /* console.log(`📦 Tipo de paquete 0xA0 (Posición extendida)
 🕒 Fecha/Hora: ${year}-${month}-${day} ${hour}:${minute}:${second}
 📡 Satélites: ${satellites} | GPS válido: ${gpsValid}
 📍 Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)}
 🚗 Velocidad: ${speed} km/h | Curso: ${course}°
 📶 MCC: ${mcc}, MNC: ${mnc}, LAC: ${lac}, CellID: ${cellId}
 🔐 ID parcial: ${deviceId}`);
-let imei = conexionesIMEI.get(socket);
+let imei = conexionesIMEI.get(socket);*/
 saveHistory(imei, lat, lon, course, speed);
 
 enviarCoordenadas(lat, lon, course, speed, imei);
@@ -462,12 +462,12 @@ enviarCoordenadas(latitude, longitude, course, speed, imei); // 🔥 Aquí se ma
 
   if (isLatNegative) lat *-1;
   if (isLonNegative) lon *-1;
-  console.log(`📍 POSICIÓN:
+ /* console.log(`📍 POSICIÓN:
 🗓️ ${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}
 📡 Satélites: ${satellites}
 📍 Lat: ${lat.toFixed(6)}
 📍 Lon: ${lon.toFixed(6)}
-🚗 Vel: ${speed} km/h`);
+🚗 Vel: ${speed} km/h`);*/
 let imei = conexionesIMEI.get(socket);
 enviarCoordenadas(lat, lon, courseStatus, speed, imei);
   const serial1 = data[data.length - 6];
@@ -533,7 +533,7 @@ enviarCoordenadas(lat, lon, courseStatus, speed, imei);
 
     const textoRespuesta = payload.toString('ascii').trim();
 
-    console.log(`📨 RESPUESTA DEL DISPOSITIVO: ${textoRespuesta}`);
+    console.log(`📨 RESPUESTA DEL DISPOSITIVO///////////////: ${textoRespuesta}`);
 
     // ACK automático (opcional si no es requerido por el protocolo)
   }
