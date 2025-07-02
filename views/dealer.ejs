@@ -152,7 +152,7 @@ const ws = new WebSocket('ws://187.33.155.83:8080');
    
 
     ws.onopen = () => {
-      ws.send(JSON.stringify({ tipo: "suscribirse", imei: imeis[0]}));
+      ws.send(JSON.stringify({ tipo: "suscribirse", imei: imeis[2]}));
 
 
     };
