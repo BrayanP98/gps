@@ -711,7 +711,7 @@ function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
 
   const comandoPayload1 = Buffer.concat([
   payload,
-  crcBuffer
+  crc
 ]);
 
 
