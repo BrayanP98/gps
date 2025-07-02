@@ -712,6 +712,7 @@ function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
   payload,
   crcBuffer
 ]);
+console.log(comandoPayload1)
 
 const longitud1 = Buffer.from([comandoPayload1.length]);
 const comandoPayload2 = Buffer.concat([
