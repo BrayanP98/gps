@@ -27,6 +27,8 @@
 
 
     <div id="user_dispositive">
+
+      <input id="comands_send"  type="text">
       <a  id="send_commands">dispositivos</a>
       <div id="div_view_disposities">
 
@@ -213,12 +215,13 @@ sendComands()
     ////////////////////////
 
     function sendComands(){
-      alert("sss")
-const imei="862476051192986"
-      var comando="RELAY,0#"
+    var comands_send=getElementById("comands_send").value
+
+        const imei="862476051192986"
+     // var comando="RELAY,1#"
       
 
-      ws.send(JSON.stringify({ tipo: "commands", command: comando,imei:imei}));
+      ws.send(JSON.stringify({ tipo: "commands", command: comands_send,imei:imei}));
 
 
     
