@@ -165,6 +165,8 @@ if (!socket) {
 try {
    const ack = Buffer.from('787814800C0000000052454C41592C30230001000323BD0D0A', 'hex');
     //const ack = Buffer.from(comando, 'hex');
+
+    //78 78 14 80 0c 00 00 00 00 52 45 4c 41 59 2c 31 23 00 01 00 03 27 96 0d 0a
    //const ack = Buffer.from('787814800C0000000052454C41592C3023001000344ECA30D0A', 'hex');
  
 
@@ -706,7 +708,7 @@ function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
   const longitud = Buffer.from([payload.length]);
   const crc = crc16IBMSDLC(payload);
   const crcBuffer = Buffer.alloc(2);
-  crcBuffer.writeUInt16BE(crc);
+  crcBuffer.writeUInt16LE(crc);
 
   const comandoPayload1 = Buffer.concat([
   payload,
@@ -723,7 +725,7 @@ const comandoPayload2 = Buffer.concat([
 console.log(comandoPayload2)
 const crc1 = crc16IBMSDLC(comandoPayload2);
   const crcBuffer1 = Buffer.alloc(2);
-  crcBuffer1.writeUInt16BE(crc1);
+  crcBuffer1.writeUInt16LE(crc1);
   const paquete = Buffer.concat([
     Buffer.from([0x78, 0x78]),
     longitud1,
