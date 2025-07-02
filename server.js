@@ -470,7 +470,7 @@ enviarCoordenadas(latitude, longitude, course, speed, imei); // 🔥 Aquí se ma
 📍 Lon: ${lon.toFixed(6)}
 🚗 Vel: ${speed} km/h`);*/
 let imei = conexionesIMEI.get(socket);
-enviarCoordenadas(lat, lon, courseStatus, speed, imei);
+enviarCoordenadas(lat, -lon, courseStatus, speed, imei);
   const serial1 = data[data.length - 6];
   const serial2 = data[data.length - 5];
   const payload = Buffer.from([0x05, 0x22, serial1, serial2]);
