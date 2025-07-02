@@ -163,7 +163,8 @@ if (!socket) {
 }
 
 try {
-   const ack = Buffer.from('787814800C0000000052454C41592C30230001000327960D0A', 'hex');
+   //const ack = Buffer.from('787814800C0000000052454C41592C30230001000327960D0A', 'hex');
+    const ack = Buffer.from(comando, 'hex');
    //const ack = Buffer.from('787814800C0000000052454C41592C3023001000344ECA30D0A', 'hex');
  
 
@@ -623,7 +624,7 @@ function armarComandoGT06(tipo, imei) {
 
 
 
-function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
+function construirComandoGT0d6(comandoTexto, serial = 0x0003, idioma = 0x0001) {
   const PROTOCOLO = 0x80;
   const SERVER_FLAG = Buffer.from([0x00, 0x00, 0x00, 0x00]);
   const COMANDO_ASCII = Buffer.from(comandoTexto, 'ascii');
@@ -681,5 +682,42 @@ console.log(dataParaCRC)
 
   return paquete;
 }
+function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
+  const PROTOCOLO = 0x80;
+  const SERVER_FLAG = Buffer.from([0x00, 0x00, 0x00, 0x00]);
+  const COMANDO_ASCII = Buffer.from(comandoTexto, 'ascii');
+
+  const IDIOMA = Buffer.alloc(2);
+  IDIOMA.writeUInt16BE(idioma);
+
+  const NUMERO_SERIE = Buffer.alloc(2);
+  NUMERO_SERIE.writeUInt16BE(serial);
+
+  const longitudComando = SERVER_FLAG.length + COMANDO_ASCII.length;
+  const payload = Buffer.concat([
+    Buffer.from([PROTOCOLO]),
+    Buffer.from([longitudComando]),
+    SERVER_FLAG,
+    COMANDO_ASCII,
+    IDIOMA,
+    NUMERO_SERIE
+  ]);
+
+  const longitud = Buffer.from([payload.length]);
+  const crc = crc16Xmodem(payload);
+  const crcBuffer = Buffer.alloc(2);
+  crcBuffer.writeUInt16BE(crc);
+
+  const paquete = Buffer.concat([
+    Buffer.from([0x78, 0x78]),
+    longitud,
+    payload,
+    crcBuffer,
+    Buffer.from([0x0D, 0x0A])
+  ]);
+
+  return paquete;
+}
+
 
 
