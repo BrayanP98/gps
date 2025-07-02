@@ -215,7 +215,7 @@ sendComands()
     function sendComands(){
       alert("sss")
 const imei="862476051192986"
-      var comando="cutEngine"
+      var comando="RELAY,0#"
       
 
       ws.send(JSON.stringify({ tipo: "commands", command: comando,imei:imei}));
