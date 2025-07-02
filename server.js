@@ -159,7 +159,7 @@ wss.on('connection', (ws) => {
 
 const socket = imeiSockets.get(imei);
 if (!socket) {
-  return res.status(404).json({ success: false, message: "Dispositivo no conectado" });
+ console.log( "Dispositivo no conectado" );
 }
 
 try {
