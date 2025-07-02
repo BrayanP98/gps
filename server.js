@@ -708,9 +708,15 @@ function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
   const crcBuffer = Buffer.alloc(2);
   crcBuffer.writeUInt16BE(crc);
 
+  const comandoPayload1 = Buffer.concat([
+  payload,
+  crcBuffer
+]);
+const longitud1 = Buffer.from([comandoPayload1.length]);
+
   const paquete = Buffer.concat([
     Buffer.from([0x78, 0x78]),
-    longitud,
+    longitud1,
     payload,
     crcBuffer,
     Buffer.from([0x0D, 0x0A])
