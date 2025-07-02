@@ -15,7 +15,7 @@ dotenv.config();
 
 const socketIMEIs = new Map();
 
-const { bufferToHex, crc16,  saveHistory, buscarImei,crc16xmodem,crc16IBMSDLC} = require('./src/function.js');
+const { bufferToHex, crc16,  saveHistory, buscarImei,crc16xmodem,crc16X25} = require('./src/function.js');
 require("./database");
 // Configuración
 const PUERTO= 5000;
@@ -706,9 +706,9 @@ function construirComandoGT06(comandoTexto, serial = 0x0003, idioma = 0x0001) {
   ]);
 
   const longitud = Buffer.from([payload.length]);
-  const crc = crc16IBMSDLC(payload);
+  const crc = crc16X25(payload);
   const crcBuffer = Buffer.alloc(2);
-  crcBuffer.writeUInt16LE(crc);
+  crcBuffer.writeUInt16BE(crc);
 
   const comandoPayload1 = Buffer.concat([
   payload,
@@ -723,9 +723,9 @@ const comandoPayload2 = Buffer.concat([
   
 ]);
 console.log(comandoPayload2)
-const crc1 = crc16IBMSDLC(comandoPayload2);
+const crc1 = crc16X25(comandoPayload2);
   const crcBuffer1 = Buffer.alloc(2);
-  crcBuffer1.writeUInt16LE(crc1);
+  crcBuffer1.writeUInt16E(crc1);
   const paquete = Buffer.concat([
     Buffer.from([0x78, 0x78]),
     longitud1,
